@@ -1,0 +1,7 @@
+# AutoJS plugin declaration for KubeJS.
+#
+# Format, parsed by dev.latvian.mods.kubejs.plugin.KubeJSPlugins#loadFromFile:
+#   <fqcn> [client|<modid> ...]
+#   client  -> only loaded when the game runs as a client
+#   <modid> -> only loaded when that mod is present
+cc.sighs.autojs.neoforge.AutoJSKubeJSPlugin

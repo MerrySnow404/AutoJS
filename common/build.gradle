@@ -1,0 +1,62 @@
+// Standalone build for the shared source tree.
+//
+// common/ holds every piece of code that has no confirmed loader/version
+// difference. It MAY reference Minecraft, NeoForge and KubeJS types: the split
+// rule is "a confirmed version difference", not "platform independence". It
+// compiles against the same NeoForge 1.21.1 classpath as
+// targets/neoforge-1.21.1, so it can be built and tested on its own:
+//
+//     gradlew -p common build
+//
+// Targets do NOT include this as a Gradle subproject. They compile these same
+// sources into their own source set through `prepareCommonSources` (see each
+// target's build.gradle), and that task is also where a target excludes the
+// common files that do have a version difference.
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.141'
+}
+
+def properties = new Properties()
+file('../gradle.properties').withInputStream { properties.load(it) }
+file('gradle.properties').withInputStream { properties.load(it) }
+properties.each { key, value -> ext.set(key.toString(), value.toString()) }
+
+group = mod_group_id
+version = mod_version
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+neoForge {
+    version = neoforge_121_version
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'Latvian'
+        url = 'https://maven.latvian.dev/releases'
+    }
+    maven {
+        name = 'JitPack'
+        url = 'https://jitpack.io'
+    }
+}
+
+dependencies {
+    implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+
+    testImplementation platform('org.junit:junit-bom:5.10.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+}

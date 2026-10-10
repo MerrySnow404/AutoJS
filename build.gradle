@@ -1,0 +1,35 @@
+def targetBuilds = [
+        'neoforge-1.21.1': [directory: 'targets/neoforge-1.21.1', task: 'buildNeoForge1211'],
+]
+
+def selectedTarget = providers.gradleProperty('target').orNull
+def buildAllTargets = providers.gradleProperty('allTargets').map { it.toBoolean() }.orElse(false)
+
+if (selectedTarget != null && !targetBuilds.containsKey(selectedTarget)) {
+    throw new GradleException("Unknown target '${selectedTarget}'. Available targets: ${targetBuilds.keySet().join(', ')}")
+}
+
+targetBuilds.each { targetName, targetBuild ->
+    tasks.register(targetBuild.task, Exec) {
+        group = 'build'
+        description = "Builds ${targetName} in its independent Gradle project."
+        workingDir rootDir
+        commandLine 'cmd', '/c', "${rootDir.absolutePath}\\gradlew.bat", '-p', targetBuild.directory.replace('/', '\\'), 'build', '--console', 'plain', '--no-daemon'
+    }
+}
+
+// common/ is a shared source tree that also compiles standalone
+// (`gradlew -p common build`); the root build orchestrates the target builds.
+tasks.register('build') {
+    group = 'build'
+    description = 'Builds the selected target (defaults to the only configured one).'
+
+    def effectiveTarget = selectedTarget ?: targetBuilds.keySet().first()
+    dependsOn tasks.named(targetBuilds[effectiveTarget].task)
+
+    if (buildAllTargets.get()) {
+        targetBuilds.values().each { targetBuild ->
+            dependsOn tasks.named(targetBuild.task)
+        }
+    }
+}
