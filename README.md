@@ -50,6 +50,7 @@ AutoJS 把 KubeJS 的脚本上下文包装成本地 MCP（Model Context Protocol
 
 - 传输：Streamable HTTP，端点为 `POST http://<bindAddress>:<port>/mcp`（默认 `127.0.0.1:25585`）。另有 `GET /health`（探活）与 `GET /`（摘要）。不提供服务端 SSE 流，因此 `GET /mcp` 返回 405，与规范允许的行为一致。
 - 配置文件：`config/autojs.json`，首次启动自动生成。
+- 端口：由 `config/autojs.json` 的 `port` 决定（默认 `25585`）。启动期还可覆盖它，方便一台机器并跑多个实例而不用改这份被共享的配置：系统属性 `-Dautojs.port=12345` 优先于环境变量 `AUTOJS_PORT`，二者都优先于配置文件；填 `0` 则向系统要一个空闲端口，实际端口写进日志并由 `status` 报出。覆盖只作用于本次运行，不回写配置文件。
 - 工具：
   - `status`：列出本实例存在的 side、各自是否可用，以及端点与限额。
   - `eval_js`：参数 `code`、`side`（`auto`/`server`/`client`）、`timeout_ms`；在选定 side 的主线程上通过 KubeJS 执行 JavaScript，返回最后一个表达式的值。本次调用期间该 side 打出的日志会作为 `diagnostics` 一并返回——KubeJS 有些失败不抛出，只写日志，这个字段就是让它们可见的地方。

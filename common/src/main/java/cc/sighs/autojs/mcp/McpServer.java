@@ -75,6 +75,12 @@ public final class McpServer implements AutoCloseable {
         server.createContext(AutoJS.MCP_PATH, this::handleMcp);
         server.start();
 
+        // A port of 0 asks the OS for any free port. Read back what it actually handed us and keep it, so
+        // the log line and the status tool report the port a client has to connect to, not the request.
+        if (config.port == 0) {
+            config.port = server.getAddress().getPort();
+        }
+
         this.http = server;
         this.executor = pool;
 

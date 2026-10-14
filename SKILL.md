@@ -26,7 +26,7 @@ description: Test Minecraft mods on a running game through the AutoJS MCP endpoi
 - 传输：Streamable HTTP，`POST http://127.0.0.1:25585/mcp`（JSON-RPC 2.0）。无状态，不提供服务端 SSE 流，所以 `GET /mcp` 返回 405。`GET /health` 探活，`GET /` 给摘要。
 - 管线：HTTP 线程收到 `tools/call` → 把工作投给对应端的**主线程**（服务器线程 / 渲染线程）→ 主线程执行 JS → 结果回到 HTTP 线程。所以脚本永远在正确的线程上跑，你不需要自己排队。
 - 沙箱：`unrestricted` 默认为 `true`，即 KubeJS 的类过滤、事件注册守卫、路径限制**全部拆掉**——`eval_js` 里能做这个 JVM 能做的任何事（加载任意类、读写任意路径、运行期注册事件处理器）。这是"测模组"需要的权限，也是它必须只绑 loopback 的原因。
-- 配置：游戏目录 `config/autojs.json`（`enabled` / `bindAddress` / `port` / `token` / `unrestricted` / `evalTimeoutMs`）。填了 `token` 就要带 `Authorization: Bearer <token>`；非本地的 `Origin` 头一律拒绝。
+- 配置：游戏目录 `config/autojs.json`（`enabled` / `bindAddress` / `port` / `token` / `unrestricted` / `evalTimeoutMs`）。填了 `token` 就要带 `Authorization: Bearer <token>`；非本地的 `Origin` 头一律拒绝。**端口可在启动期覆盖**：`-Dautojs.port=` 优先于 `AUTOJS_PORT` 环境变量，二者优先于配置文件；`0` 让系统给个空闲端口，实际值由 `status` 报出——同一台机器并跑多个实例时用它，免得撞端口。
 - 生命周期：监听器在每个 side 就绪时开启（服务端：`ServerStartedEvent`；客户端：第一个 tick），最后一个 side 消失时关闭（客户端退出世界不关监听器，只下线 server side）。
 
 **两端模型**（这是最容易搞错的一点）：

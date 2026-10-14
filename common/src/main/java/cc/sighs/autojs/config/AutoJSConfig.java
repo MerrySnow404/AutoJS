@@ -40,7 +40,14 @@ public final class AutoJSConfig {
     /** Interface the MCP listener binds to. Loopback only by default. */
     public String bindAddress = "127.0.0.1";
 
-    /** TCP port of the MCP listener. */
+    /**
+     * TCP port of the MCP listener.
+     *
+     * <p>Overridable at launch so several instances can run side by side without editing this file: the
+     * {@code autojs.port} system property wins over the {@code AUTOJS_PORT} environment variable, and both
+     * win over this file. Setting it to {@code 0} asks the OS for a free port, which is then reported by
+     * {@code status} and in the log.
+     */
     public int port = 25585;
 
     /** Expose the server side (dedicated server, or the integrated server of a singleplayer world). */
@@ -62,13 +69,13 @@ public final class AutoJSConfig {
     public boolean logEval = true;
 
     public static AutoJSConfig load(Path file) {
+        AutoJSConfig config = null;
         if (Files.isRegularFile(file)) {
             try {
-                var parsed = GSON.fromJson(Files.readString(file, StandardCharsets.UTF_8), AutoJSConfig.class);
-                if (parsed != null) {
-                    return parsed;
+                config = GSON.fromJson(Files.readString(file, StandardCharsets.UTF_8), AutoJSConfig.class);
+                if (config == null) {
+                    LOGGER.error("{} is empty; using defaults", file);
                 }
-                LOGGER.error("{} is empty; using defaults", file);
             } catch (IOException | JsonSyntaxException e) {
                 LOGGER.error("Could not read {}; using defaults", file, e);
             }
@@ -79,7 +86,39 @@ public final class AutoJSConfig {
                 LOGGER.error("Could not write the default config to {}", file, e);
             }
         }
-        return new AutoJSConfig();
+        if (config == null) {
+            config = new AutoJSConfig();
+        }
+        config.applyLaunchPort();
+        return config;
+    }
+
+    /**
+     * Applies the launch-time port override. It exists so a second game instance, or an automated
+     * launcher, can pin the port without touching the config file every instance shares. Nothing is
+     * written back, so the file keeps the port the user chose.
+     */
+    private void applyLaunchPort() {
+        var source = "autojs.port";
+        var raw = System.getProperty(source);
+        if (raw == null || raw.isBlank()) {
+            source = "AUTOJS_PORT";
+            raw = System.getenv(source);
+        }
+        if (raw == null || raw.isBlank()) {
+            return;
+        }
+        try {
+            var overridden = Integer.parseInt(raw.trim());
+            if (overridden < 0 || overridden > 65535) {
+                LOGGER.warn("Ignoring {}={}: a port must be between 0 and 65535", source, raw);
+                return;
+            }
+            port = overridden;
+            LOGGER.info("MCP port overridden to {} by {}", overridden, source);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Ignoring {}={}: not a number", source, raw);
+        }
     }
 
     public void save(Path file) throws IOException {
