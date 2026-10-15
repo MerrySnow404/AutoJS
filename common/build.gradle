@@ -46,6 +46,12 @@ repositories {
 }
 
 dependencies {
+    // Rhino, the script engine the kernel in rhino/ runs on. A hard dependency, on the same version KubeJS
+    // depends on, so a KubeJS mode never loads two Rhinos.
+    implementation "dev.latvian.mods:rhino:${rhino_version}"
+
+    // KubeJS APIs. Only the kubejs/ wiring and the KubeJS-specific classes mention KubeJS types, and the
+    // target turns this into a soft dependency at packaging time (compileOnly + runtimeOnly there).
     implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
     testImplementation platform('org.junit:junit-bom:5.10.2')

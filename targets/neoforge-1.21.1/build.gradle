@@ -88,9 +88,15 @@ repositories {
 }
 
 dependencies {
-    // KubeJS APIs used by AutoJS. On both the compile and the dev runtime
-    // classpath, so runClient/runServer load KubeJS too.
-    implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    // Rhino, the script engine AutoJS embeds so that KubeJS can be optional. Always on the classpath: it is
+    // what the standalone kernel runs on, and neoforge.mods.toml declares it a required mod dependency.
+    implementation "dev.latvian.mods:rhino:${rhino_version}"
+
+    // KubeJS APIs used by AutoJS. compileOnly because KubeJS is a soft dependency: the mod has to load and run
+    // without it. runtimeOnly puts it back on the dev runtime classpath, so runClient/runServer still exercise
+    // the KubeJS mode, which is the mode that has to keep behaving exactly as before.
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    runtimeOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'

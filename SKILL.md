@@ -1,18 +1,18 @@
 ---
 name: autojs
-description: Test Minecraft mods on a running game through the AutoJS MCP endpoint. Use it to evaluate JavaScript on the client or server side of a live NeoForge 1.21.1 + KubeJS game, inspect and mutate state, place blocks, summon entities, open GUIs, drive the player, hot-reload KubeJS scripts, read their errors, and turn any of it into a repeatable assertion.
+description: Test Minecraft mods on a running game through the AutoJS MCP endpoint. Use it to evaluate JavaScript on the client or server side of a live NeoForge 1.21.1 game (KubeJS when it is installed, AutoJS's own Rhino kernel when it is not), inspect and mutate state, place blocks, summon entities, open GUIs, drive the player, hot-reload scripts, read their errors, and turn any of it into a repeatable assertion.
 ---
 
 # AutoJS
 
-把运行中的游戏的 KubeJS 脚本上下文暴露成本地 MCP 端点：**一条通向活着的游戏的口子，里面跑什么脚本由你决定**。
+把运行中的游戏的脚本上下文暴露成本地 MCP 端点：**一条通向活着的游戏的口子，里面跑什么脚本由你决定**。这里的上下文是 KubeJS 的脚本上下文（装了 KubeJS），或 AutoJS 自带的 Rhino 内核（没装）——两种模式能力不同，见 README 的「两种模式：KubeJS 可选」。
 
 用途是**测模组**，工作方式是**高频迭代**：写一小段脚本 → 跑 → 看返回值/日志 → 改 → 再跑。没有构建、没有重启、秒级往返，所以可以一条一条假设地试，而不是一次写一大段赌它对。这也是它区别于"写个调试命令 / 加临时日志 / 重启游戏"的地方：**试错成本低到可以随便试**。
 
 所以**不要被下面任何一层绑住**：
 
 - 内置 `AutoJS.*`（第 3 节）是**可选封装**——省掉坐标、注册表查找、掉落拾取之类的样板，不用它直接写 Java 也一样能碰到任何东西；
-- KubeJS 事件是**可选驱动方式**——需要"随时间观察/随事件触发"时用它最省事，需要一次性求值时完全不必；
+- KubeJS 事件是**可选驱动方式**——需要"随时间观察/随事件触发"时用它最省事，需要一次性求值时完全不必（Rhino 模式下没有事件系统，退回自己轮询）；
 - 第 4 节的参考流程只是**常见环境的现成套路**，照抄可以，但不是必走路径。
 
 反过来，三层都用上通常最省事：用 `eval_js` 跑一段 Java 拿到对象，用 KubeJS 事件观察后续，用 `AutoJS.*` 收拾样板活。
@@ -21,7 +21,7 @@ description: Test Minecraft mods on a running game through the AutoJS MCP endpoi
 
 ## 1. 框架原理
 
-**结构**：`KubeJS 脚本上下文 → AutoJS（MCP 端点）→ 你`。
+**结构**：`脚本上下文（KubeJS 或 AutoJS 自带的 Rhino）→ AutoJS（MCP 端点）→ 你`。
 
 - 传输：Streamable HTTP，`POST http://127.0.0.1:25585/mcp`（JSON-RPC 2.0）。无状态，不提供服务端 SSE 流，所以 `GET /mcp` 返回 405。`GET /health` 探活，`GET /` 给摘要。
 - 管线：HTTP 线程收到 `tools/call` → 把工作投给对应端的**主线程**（服务器线程 / 渲染线程）→ 主线程执行 JS → 结果回到 HTTP 线程。所以脚本永远在正确的线程上跑，你不需要自己排队。

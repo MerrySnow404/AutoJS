@@ -12,7 +12,7 @@
 | 当前 target | `neoforge-1.21.1` |
 | Minecraft / NeoForge | 1.21.1 / 21.1.234 |
 | Gradle JVM | JDK 21 |
-| 依赖 | [KubeJS](https://kubejs.com) `2101.7.2-build.379` |
+| 依赖 | [Rhino](https://kubejs.com) `2101.2.7-build.81`（必需，脚本内核）+ [KubeJS](https://kubejs.com) `2101.7.2-build.379`（可选，装了就用 KubeJS 模式） |
 
 ## IDEA
 
@@ -33,7 +33,7 @@
 ## 结构
 
 - `common/`: 所有没有确证版本差异的共享代码与共享资源，可以引用 Minecraft、NeoForge 与 KubeJS 类型。
-- `targets/*`: loader 和版本专属入口、metadata、资源及 API 适配。
+- `targets/*`: 只放 loader 和版本专属的 metadata 与资源（`META-INF/neoforge.mods.toml`、`kubejs.plugins.txt`）；Java 代码不分家，全部在 `common`。
 - `gradle/target-conventions/publish.gradle`: 所有 target 共用的发布约定。
 
 每个 target 通过 source-set sharing 把 `../../common/src/main/java`（由 `prepareCommonSources` 同步到生成目录）直接编译进自己的源码集，因此 `common` 既能在任意 target 内被独立编辑，也能单独构建：
@@ -46,16 +46,35 @@
 
 ## MCP 端点
 
-AutoJS 把 KubeJS 的脚本上下文包装成本地 MCP（Model Context Protocol）端点，让 AI 直接读写运行中的游戏，而不是靠读代码猜。
+AutoJS 把游戏里的脚本上下文包装成本地 MCP（Model Context Protocol）端点，让 AI 直接读写运行中的游戏，而不是靠读代码猜。脚本上下文有两种：装了 KubeJS 就用 KubeJS 的，没装就用 AutoJS 自带的 Rhino 内核（见下「两种模式」）。
 
 - 传输：Streamable HTTP，端点为 `POST http://<bindAddress>:<port>/mcp`（默认 `127.0.0.1:25585`）。另有 `GET /health`（探活）与 `GET /`（摘要）。不提供服务端 SSE 流，因此 `GET /mcp` 返回 405，与规范允许的行为一致。
 - 配置文件：`config/autojs.json`，首次启动自动生成。
 - 端口：由 `config/autojs.json` 的 `port` 决定（默认 `25585`）。启动期还可覆盖它，方便一台机器并跑多个实例而不用改这份被共享的配置：系统属性 `-Dautojs.port=12345` 优先于环境变量 `AUTOJS_PORT`，二者都优先于配置文件；填 `0` 则向系统要一个空闲端口，实际端口写进日志并由 `status` 报出。覆盖只作用于本次运行，不回写配置文件。
 - 工具：
   - `status`：列出本实例存在的 side、各自是否可用，以及端点与限额。
-  - `eval_js`：参数 `code`、`side`（`auto`/`server`/`client`）、`timeout_ms`；在选定 side 的主线程上通过 KubeJS 执行 JavaScript，返回最后一个表达式的值。本次调用期间该 side 打出的日志会作为 `diagnostics` 一并返回——KubeJS 有些失败不抛出，只写日志，这个字段就是让它们可见的地方。
-  - `kubejs_log`：参数 `side`、`kind`（`errors`/`warnings`/`all`）、`limit`；读该 side 的 `logs/kubejs/<side>.log`。KubeJS 在每次重载时清空它，所以重载后立即读取得到的就是这次加载的报错。Rhino 的一个解析错误会吐几十行 JVM 栈帧，这里会折叠成首帧 + 计数，`errorCount` 计的是消息数而非行数。
-  - `reload_scripts`：参数 `side`、`timeout_ms`；重跑该 side 的脚本，等价于游戏内 `/kubejs reload <side>-scripts`。服务端脚本重载不会连带 `/reload` 数据包，所以改到配方/标签/战利品表还需要一次数据包重载。
+  - `eval_js`：参数 `code`、`side`（`auto`/`server`/`client`）、`timeout_ms`；在选定 side 的主线程上执行 JavaScript，返回最后一个表达式的值。本次调用期间该 side 打出的日志会作为 `diagnostics` 一并返回——KubeJS 有些失败不抛出，只写日志，这个字段就是让它们可见的地方。
+  - `kubejs_log`：参数 `side`、`kind`（`errors`/`warnings`/`all`）、`limit`；读该 side 的 `logs/kubejs/<side>.log`。只在 KubeJS 模式下注册。KubeJS 在每次重载时清空它，所以重载后立即读取得到的就是这次加载的报错。Rhino 的一个解析错误会吐几十行 JVM 栈帧，这里会折叠成首帧 + 计数，`errorCount` 计的是消息数而非行数。
+  - `reload_scripts`：参数 `side`、`timeout_ms`；重跑该 side 的脚本，等价于游戏内 `/kubejs reload <side>-scripts`；没装 KubeJS 时则是重建该 side 的 Rhino 作用域。服务端脚本重载不会连带 `/reload` 数据包，所以改到配方/标签/战利品表还需要一次数据包重载。
+
+### 两种模式：KubeJS 可选
+
+AutoJS 自带 Rhino 脚本内核（对 `dev.latvian.mods:rhino` 是硬依赖），KubeJS 从 `required` 降为 `optional`。选法只有一个判据：`ModList.get().isLoaded("kubejs")`。两种模式不会同时使用，Rhino 内核在 KubeJS 模式下根本不实例化。
+
+| | KubeJS 模式（装了 KubeJS） | Rhino 模式（没装） |
+| --- | --- | --- |
+| `eval_js` | 跑在该 side 的 KubeJS 上下文里，与改动前完全一致 | 跑在 AutoJS 自己建的 Rhino 作用域里 |
+| `AutoJS.*` | 全部 | 全部；`log()` 的输出既进 `diagnostics` 也进游戏日志 |
+| `diagnostics` | 本次调用期间 `logs/kubejs/<side>.log` 新增的行 | 本次 eval 内联捕获的 `console`/`AutoJS.log` 输出与异常 |
+| KubeJS 全局（`Item`/`Text`/`NBT`、事件对象…） | 有 | **没有**，退回 `Java.loadClass('全类名')` |
+| KubeJS 事件（`ServerEvents` 等） | 有 | **没有** |
+| `kubejs_log` | 注册 | **不注册** |
+| `reload_scripts` | KubeJS 的 reload 路径（客户端还会重收 tooltip 缓存） | 重建该 side 的 Rhino 作用域 |
+| 沙箱 | 由 `unrestricted` 决定是否拆 | 天生没有沙箱：裸 Rhino context 不过滤任何类 |
+
+Rhino 模式只是"能跑脚本"，不是 KubeJS 的等价替代：事件系统与预注册绑定层刻意没有复刻。接线都在 `common/src/main/java/cc/sighs/autojs/neoforge/`：`AutoJSBackends` 是门面且不 import 任何 KubeJS 类型（所以没装 KubeJS 时 mod 构造期不会 `NoClassDefFoundError`），KubeJS 分支收在 `kubejs/KubeJSIntegration` 里。
+
+一个例外要说明：启动脚本（`startup_scripts`）没有自己的 side，`AutoJS.side()` 一律报 `server`（KubeJS 模式下以前报 `startup`）；日志出口仍然是 KubeJS 的 startup 控制台，不受影响。
 
 ### 客户端与服务端
 
@@ -96,7 +115,7 @@ AutoJS 把 KubeJS 的脚本上下文包装成本地 MCP（Model Context Protocol
 
 ## AutoJS 全局
 
-同一套能力也以 `AutoJS` 全局绑定注入每个 KubeJS 脚本上下文，`startup_scripts` / `server_scripts` / `client_scripts` 里都能直接用，和 `eval_js` 是同一个对象（代码在 `targets/*/…/neoforge/script/AutoJSTools.java`）：
+同一套能力也以 `AutoJS` 全局绑定注入每个脚本上下文（KubeJS 的，或 Rhino 模式下的那一个），`startup_scripts` / `server_scripts` / `client_scripts` 里都能直接用，和 `eval_js` 是同一个对象（代码在 `common/src/main/java/cc/sighs/autojs/neoforge/script/AutoJSTools.java`）。Rhino 模式下 `startup_scripts` 不存在，`AutoJS` 挂在 `eval_js` 的作用域上：
 
 ```js
 AutoJS.where()       // 人话回答现在在哪："at the main menu" / "playing in minecraft:overworld at 2,89,-6, no screen open" / "at a crafting table"
@@ -176,7 +195,7 @@ AutoJS.area(AutoJS.player(), 48, { top: 20, entities: 10, volume: false })
 
 ## 依赖
 
-KubeJS 在 target 与 `common` 中各自声明，两边都从公开仓库解析：
+依赖分两层写：`common` 需要 Rhino（`implementation`，脚本内核）与 KubeJS（`implementation`，共享代码要编译它引用的类型）；target 把 KubeJS 降级成软依赖——`compileOnly` + `runtimeOnly`——因为最终 jar 必须在没有 KubeJS 的实例里正常加载。target 的 `dependencies` 如下：
 
 ```groovy
 repositories {
@@ -185,11 +204,14 @@ repositories {
 }
 
 dependencies {
-    implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    // KubeJS 是软依赖：编译需要、运行不一定有；runtimeOnly 让 dev 运行照旧加载它来测 KubeJS 模式
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    runtimeOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    implementation "dev.latvian.mods:rhino:${rhino_version}"
 }
 ```
 
-`kubejs_version` 同时写在 `targets/neoforge-1.21.1/gradle.properties` 与 `common/gradle.properties`（后者供 `common` 独立编译使用），两者必须保持一致。`targets/neoforge-1.21.1` 的 `META-INF/neoforge.mods.toml` 把 KubeJS 声明为 `required` 依赖（`ordering = "AFTER"`）。
+`kubejs_version` 与 `rhino_version` 同时写在 `targets/neoforge-1.21.1/gradle.properties` 与 `common/gradle.properties`（后者供 `common` 独立编译使用），各版本号在两处必须保持一致；rhino 取的是 KubeJS 自己依赖的那个版本，避免 dev 运行时出现两份 Rhino。`targets/neoforge-1.21.1` 的 `META-INF/neoforge.mods.toml` 把 `kubejs` 声明为 `optional`（`ordering = "AFTER"`）、`rhino` 声明为 `required`（`versionRange = "[2101,)"`）。
 
 ## 共享资源
 

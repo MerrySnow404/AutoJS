@@ -11,17 +11,18 @@ gradle/target-conventions/      所有 target 共用的构建约定
 ```
 
 - `common` 放所有没有确证版本差异的代码，包括引用 Minecraft、NeoForge 与 KubeJS 类型的那部分；依赖平台类型不是拆分理由，Java 版本也不是。
-- `targets/*` 只放该 target 的入口、注册、事件、Minecraft API、Mixin、网络、渲染和 metadata。
+- `targets/*` 只放该 target 的 metadata 与资源（`META-INF/neoforge.mods.toml`、`kubejs.plugins.txt`、版本/loader 专属资源）。**Java 代码一律在 `common`**，包括 mod 入口、事件注册、Minecraft 与 KubeJS 的接线；按上一条，它们没有确证版本差异，就不是拆分理由。
 - 每个 target 通过 `includeBuild('../../common')` 把 `common` 作为 composite build 导入 IDE（仅让 IDE 把 `common` 当作独立可编辑模块，不产生 Gradle 项目依赖）；再用 source-set sharing 把共享源码编译进自己：`prepareCommonSources` 这个 `Sync` 任务把 `../../common/src/main/java` 同步到 `$buildDir/generated/common-main` 并加入 main 源码集，test 源码集加入 `../../common/src/test/java` 与 `../../common/src/test/resources`。target 不依赖 `project(':common')`。
 - 版本差异的登记点是各 target `prepareCommonSources` 里的 `exclude` 块：某个 common 文件在该 target 上有确证差异时，在那里 `exclude '<路径>'`，并把该 target 自己的实现放进 target。
 - 唯一能把代码从 `common` 拆到 `targets/<loader>-<mc-version>/` 的理由是：经阅读实际源码/API 确证该内容在不同 loader 或不同 Minecraft 版本之间存在差异。不得凭猜测拆分，也不得为了“代码好看”而拆分。
-- `common` 不是独立的 Gradle 子项目，而是共享源码树：`common/build.gradle` 用 `java-library` + `net.neoforged.moddev 2.0.141`、toolchain 21，对着与 `targets/neoforge-1.21.1` 相同的 NeoForge 1.21.1 类路径（含 KubeJS）独立编译与测试（`gradlew -p common build` / `gradlew -p common test`）。
+- `common` 不是独立的 Gradle 子项目，而是共享源码树：`common/build.gradle` 用 `java-library` + `net.neoforged.moddev 2.0.141`、toolchain 21，对着与 `targets/neoforge-1.21.1` 相同的 NeoForge 1.21.1 类路径（含 KubeJS 与 Rhino）独立编译与测试（`gradlew -p common build` / `gradlew -p common test`）。
 - 不要用运行时版本判断、反射或同名 class 覆盖来兼容不同 target；不同 API 应由各 target 的适配器实现。
 - 一个发布 jar 只对应一个 loader 与一个 Minecraft 版本，禁止 universal jar。
-- AutoJS 的 MCP 层沿用同一条边界：协议、HTTP 传输、工具注册表、side 抽象与 `EvalBackend` SPI 在 `common`；KubeJS 与 Minecraft 的接线（插件入口、两个 side 的后端、生命周期事件）在 target，因为那是 loader/版本专属 API。
-- 客户端专属类（`neoforge/client/ClientEvalBackend`、`AutoJSNeoForgeClient`）只能被客户端路径引用。服务端入口一律不得直接加载它们，否则专用服务器会 `NoClassDefFoundError`。
+- AutoJS 的分层不再按"共同 vs target"切：MCP 协议、HTTP 传输、工具注册表、side 抽象与 `EvalBackend` SPI，连同 mod 入口、两个 side 的后端、生命周期事件、KubeJS 接线与 Rhino 内核，全部在 `common/src/main/java/cc/sighs/autojs/`，NeoForge 专属部分收在其中的 `neoforge/` 包里。target 里没有 Java 代码。
+- 客户端专属类（`neoforge/client/ClientEvalBackend`、`AutoJSNeoForgeClient`，同样在 `common` 里）只能被客户端路径引用。服务端入口一律不得直接加载它们，否则专用服务器会 `NoClassDefFoundError`。
+- KubeJS 是软依赖，判据只有 `ModList.get().isLoaded("kubejs")`：门面 `AutoJSBackends` 与 mod 入口不得 import 任何 `dev.latvian.mods.kubejs` 类型，KubeJS 分支只能收在 `kubejs/KubeJSIntegration` 与既有的 KubeJS 专用类里，否则没装 KubeJS 时构造期就 `NoClassDefFoundError`。没装 KubeJS 时用自带内核（`rhino/`、`backend/RhinoSideBackend`、`eval/ScriptValue`），它按 `neoforge.mods.toml` 里的 `rhino` 依赖在运行时解析。
 - `kubejs.plugins.txt` 归 target：它是 KubeJS 专属入口，格式为 `<fqcn> [client|<modid> ...]`。
-- 拆 KubeJS 沙箱的代码全部在 `targets/*/…/neoforge/unrestricted/`，由 `unrestricted` 配置开关控制，而且只用公开 API 实现（Context 子类、public 字段、`TypeWrappers.wrappers` 的条目替换），不使用 Mixin 也不使用反射，以免 KubeJS 升级就把整条链扯断。
+- 拆 KubeJS 沙箱的代码全部在 `common` 的 `neoforge/unrestricted/` 下，由 `unrestricted` 配置开关控制，而且只用公开 API 实现（Context 子类、public 字段、`TypeWrappers.wrappers` 的条目替换），不使用 Mixin 也不使用反射，以免 KubeJS 升级就把整条链扯断。
 
 ## 文件与配置约定
 
@@ -31,7 +32,7 @@ gradle/target-conventions/      所有 target 共用的构建约定
 | 共享资源 | `common/src/main/resources/` | 会自动合并到所有 target 的最终 jar。 |
 | 目标专属资源 | `targets/<name>/src/main/resources/` | 仅放该版本/loader 专属资源。 |
 | Loader metadata | target 的 `src/main/resources/` | 保留在 target；Fabric、Forge、NeoForge 格式不可共用。 |
-| 版本/loader 参数 | `targets/<name>/gradle.properties` | 不放在仓库根 `gradle.properties`；`kubejs_version` 必须与 `common/gradle.properties` 保持一致。 |
+| 版本/loader 参数 | `targets/<name>/gradle.properties` | 不放在仓库根 `gradle.properties`；`kubejs_version` 与 `rhino_version` 必须与 `common/gradle.properties` 保持一致。 |
 | 共享模组信息 | 根 `gradle.properties` | 仅 `mod_*` 和 Gradle 运行参数。 |
 | 本地 jar 依赖 | `targets/<name>/libs/` | 自动作为 `implementation` 依赖读取；不需要逐条声明。 |
 | 发布配置 | `gradle/target-conventions/publish.gradle` | 统一管理，target 不复制发布逻辑。 |
@@ -81,7 +82,7 @@ $env:MODRINTH_TOKEN = '...'
 
 1. **盘点原项目**：记录 Minecraft 版本、loader、JDK、Gradle、mappings、入口、Mixin、资源、数据生成、依赖与运行配置。
 2. **建立 target**：为每个 `(loader, Minecraft 版本)` 建立 `targets/<loader>-<mc-version>/` 独立工程，包含 wrapper、`settings.gradle` 与本地 `gradle.properties`。用 `includeBuild('../../common')` 让 IDE 把 `common` 作为 composite build 的独立可编辑模块导入，并把 `../../common/src/main/java` 加入 main 源码集、把 `../../common/src/test/` 加入 test 源码集（source-set sharing）；不要使用 `project(':common')` 依赖。最后把目录登记进根 `build.gradle` 的 `targetBuilds`。
-3. **复制专属层**：将入口、注册、事件、Mixin、渲染、网络、metadata 和版本专属资源放入对应 target；不要在一个 target 放多版本分支。
+3. **放专属层**：把 metadata 与版本专属资源放进对应 target。入口、注册、事件这类 Java 代码默认进 `common`，只有经源码确证存在版本差异时才留在该 target；不要在一个 target 放多版本分支。
 4. **抽取 common**：把没有确证版本差异的代码（包括引用 Minecraft、NeoForge 与 KubeJS 类型的那部分）迁到 `common`；只有经源码确证存在版本差异的部分才留在 target，并在该 target 的 `prepareCommonSources` 里 `exclude` 对应路径。
 5. **迁移资源**：所有 target 共用的 assets/data/lang 放到 `common/src/main/resources/`；将 Fabric/Forge/NeoForge metadata 与版本专属 Mixin 配置保留在 target。
 6. **迁移依赖**：可从公开仓库解析的依赖写入对应 target 的 `build.gradle`（需要供 `common` 独立编译的依赖同时写进 `common/build.gradle`，并在两处 `gradle.properties` 保持版本一致）；仅本地提供的 jar 放入该 target 的 `libs/`。

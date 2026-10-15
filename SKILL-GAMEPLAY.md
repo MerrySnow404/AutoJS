@@ -177,6 +177,8 @@ if (!S.active) { if (S.wasActive) { AutoJS.move(0,0,false,false); S.wasActive = 
 
 ## 5. Rhino / KubeJS 的坑（都实际踩到过）
 
+涉及 KubeJS 的条目（`global` 赋值、KubeJS 包装补上的方法名）只适用于装了 KubeJS 的模式；Rhino 模式下没有那层包装，也没有 `global`。
+
 | 现象 | 真因 | 正确写法 |
 | --- | --- | --- |
 | `Cannot find function getYRot/setYRot/getClass` | Rhino 不暴露 | 用 `setYaw` / `setPitch` / `getViewYRot` |
