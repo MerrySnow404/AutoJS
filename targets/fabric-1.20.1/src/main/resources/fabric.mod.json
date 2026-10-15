@@ -8,12 +8,17 @@
   "license": "${mod_license}",
   "environment": "*",
   "entrypoints": {
-    "main": ["cc.sighs.temple.TempleFabric"]
+    "main": ["cc.sighs.autojs.neoforge.AutoJSFabric"],
+    "client": ["cc.sighs.autojs.neoforge.AutoJSFabricClient"]
   },
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": ">=${fabric_api_version}",
-    "minecraft": "~${minecraft_version}",
-    "java": ">=17"
+    "minecraft": "${minecraft_version_range}",
+    "java": ">=17",
+    "rhino": "${rhino_version_range}"
+  },
+  "suggests": {
+    "kubejs": "*"
   }
 }

@@ -1,5 +1,16 @@
+// One entry per target, so `-Ptarget=<name>` and `-PallTargets` can address any of them; CI does not use this
+// aggregate (docs/CI_TARGET_DISCOVERY.md builds each targets/* wrapper on its own).
+//
+// A target that carries a `libs-maven/` needs `-Pautojs.localToolchain`, which this command line does not pass:
+// those stand-ins only exist on a machine whose Gradle cannot reach maven.latvian.dev, and there the target has
+// to be built from its own directory. Everywhere else the real repositories resolve and the flag is unnecessary.
 def targetBuilds = [
         'neoforge-1.21.1': [directory: 'targets/neoforge-1.21.1', task: 'buildNeoForge1211'],
+        'neoforge-26.1'  : [directory: 'targets/neoforge-26.1', task: 'buildNeoForge261'],
+        'forge-1.20.1'   : [directory: 'targets/forge-1.20.1', task: 'buildForge1201'],
+        'forge-1.19.2'   : [directory: 'targets/forge-1.19.2', task: 'buildForge1192'],
+        'forge-1.18.2'   : [directory: 'targets/forge-1.18.2', task: 'buildForge1182'],
+        'fabric-1.20.1'  : [directory: 'targets/fabric-1.20.1', task: 'buildFabric1201'],
 ]
 
 def selectedTarget = providers.gradleProperty('target').orNull
@@ -22,7 +33,7 @@ targetBuilds.each { targetName, targetBuild ->
 // (`gradlew -p common build`); the root build orchestrates the target builds.
 tasks.register('build') {
     group = 'build'
-    description = 'Builds the selected target (defaults to the only configured one).'
+    description = 'Builds the selected target (defaults to the first configured one).'
 
     def effectiveTarget = selectedTarget ?: targetBuilds.keySet().first()
     dependsOn tasks.named(targetBuilds[effectiveTarget].task)

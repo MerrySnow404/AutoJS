@@ -43,6 +43,57 @@ tasks.register('prepareCommonSources', Sync) {
         // implementation, for example
         //     exclude 'com/example/network/ChunkPacket.java'
         // Everything not listed here stays shared with every other target.
+        //
+        // Script-engine axis. common/ only defines the engine SPI
+        // (cc.sighs.autojs.engine.ScriptEngine, EngineSideBackend); every implementation of it
+        // that reaches a KubeJS or Rhino type is target-owned, because both changed by leaps
+        // between the KubeJS generations AutoJS supports: KubeJS 2101 has KubeJSContext,
+        // KubeJSContextFactory and the plugin interface that 1802/1902/2001 do not, and Rhino
+        // only grows ContextFactory, type.TypeInfo and util.wrap at 2101. The paths below are
+        // this target's replacements; each stays as the record of a confirmed difference and
+        // keeps a stray copy out of the generated source set if one ever reappears in common.
+        exclude 'cc/sighs/autojs/neoforge/AbstractKubeJSSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSConsole.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSEvaluator.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSScriptManagers.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSKubeJSPlugin.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSUnrestricted.java'
+        exclude 'cc/sighs/autojs/neoforge/backend/RhinoSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/client/ClientEvalBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/eval/ScriptValue.java'
+        exclude 'cc/sighs/autojs/neoforge/kubejs/KubeJSIntegration.java'
+        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoBindings.java'
+        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoRuntime.java'
+        exclude 'cc/sighs/autojs/neoforge/server/ServerEvalBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/tools/KubeJSLogTool.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedAccess.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedContextFactory.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSContext.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSServerContext.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedPathWrappers.java'
+
+        // Loader axis. Same rule, one step further out: the mod constructor, its client half and
+        // the engine-selection facade are the only files whose NeoForge FML usage is their whole
+        // reason to exist.
+        exclude 'cc/sighs/autojs/neoforge/AutoJSBackends.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForge121.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForgeClient.java'
+
+        // Minecraft API axis. The shared scripts no longer name a call that moved between 1.18.2
+        // and 1.21.1: they ask cc.sighs.autojs.mc.McApi for the three interfaces a target
+        // implements, and this target's implementations are the three files below. AutoJSInput
+        // moves with them because the class it extends, net.minecraft.client.player.Input, is
+        // itself what changed: its tick takes one argument at 1.18.2 and two from 1.19, so only
+        // the target that has this Input can write the subclass the client bridge drives.
+        //
+        // As above, these lines are the record of a confirmed difference: the implementations
+        // live in this target, and listing them keeps a stray shared copy out of the generated
+        // source set if one ever reappears in common.
+        exclude 'cc/sighs/autojs/neoforge/client/AutoJSInput.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSClient.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSLoader.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSVanilla.java'
     }
     into "$buildDir/generated/common-main"
 }

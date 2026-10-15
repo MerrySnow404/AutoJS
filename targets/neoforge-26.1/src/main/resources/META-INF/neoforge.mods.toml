@@ -23,3 +23,21 @@ versionRange = "[${minecraft_version},26.2)"
 ordering = "NONE"
 side = "BOTH"
 
+# KubeJS is a soft dependency: AutoJS drives a KubeJS script context when it is installed and its own Rhino
+# kernel when it is not. Its version is the 26.1 line of KubeJS 8, addressed by the same 26.1 prefix as the
+# Minecraft version it is built for.
+[[dependencies.${mod_id}]]
+modId = "kubejs"
+type = "optional"
+versionRange = "[26.1,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Rhino is what the standalone kernel runs on, so it is required either way — and on 26.1 the artifact that
+# carries the `rhino` mod id is dev.latvian.mods:rhino itself, on its 2101 line (see libs-maven/README.md).
+[[dependencies.${mod_id}]]
+modId = "rhino"
+type = "required"
+versionRange = "[2101,)"
+ordering = "NONE"
+side = "BOTH"

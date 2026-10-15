@@ -1,18 +1,16 @@
 package cc.sighs.autojs.neoforge.script;
 
+import cc.sighs.autojs.mc.McApi;
+import cc.sighs.autojs.mc.VanillaApi;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,7 +23,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -95,7 +92,7 @@ public final class PlayerOps {
         json.addProperty("gameMode", player instanceof ServerPlayer server
                 ? server.gameMode.getGameModeForPlayer().getName()
                 : "client");
-        json.addProperty("dimension", player.level().dimension().location().toString());
+        json.addProperty("dimension", McApi.vanilla().keyId(McApi.vanilla().level(player).dimension()));
         json.add("pos", arrayOf(player.getX(), player.getY(), player.getZ()));
         json.addProperty("standingOn", AutoJSTools.formatPos(player.blockPosition()));
 
@@ -106,7 +103,7 @@ public final class PlayerOps {
         look.add("vector", arrayOf(vector.x, vector.y, vector.z));
         json.add("look", look);
 
-        json.addProperty("onGround", player.onGround());
+        json.addProperty("onGround", McApi.vanilla().onGround(player));
         json.addProperty("inWater", player.isInWater());
         json.addProperty("inLava", player.isInLava());
         json.addProperty("onFire", player.isOnFire());
@@ -115,13 +112,14 @@ public final class PlayerOps {
         json.addProperty("fallDistance", player.fallDistance);
         json.addProperty("hurtTime", player.hurtTime);
         json.addProperty("dead", player.isDeadOrDying());
-        json.addProperty("held", String.valueOf(player.getInventory().getSelected()));
+        json.addProperty("held", String.valueOf(McApi.vanilla().selectedStack(player)));
         json.addProperty("armor", player.getArmorValue());
 
         var effects = new JsonArray();
         for (var effect : player.getActiveEffects()) {
             var entry = new JsonObject();
-            entry.addProperty("id", effectId(effect.getEffect()));
+            var id = McApi.vanilla().effectId(effect);
+            entry.addProperty("id", id == null ? "unknown" : id);
             entry.addProperty("amplifier", effect.getAmplifier());
             entry.addProperty("ticks", effect.getDuration());
             effects.add(entry);
@@ -139,7 +137,7 @@ public final class PlayerOps {
         var from = player.getEyePosition();
         var to = from.add(player.getViewVector(1.0F).scale(reach));
 
-        var blockHit = player.level().clip(new ClipContext(from, to, ClipContext.Block.OUTLINE,
+        var blockHit = McApi.vanilla().level(player).clip(new ClipContext(from, to, ClipContext.Block.OUTLINE,
                 ClipContext.Fluid.NONE, player));
         var box = player.getBoundingBox().expandTowards(to.subtract(from)).inflate(1.0D);
         var entityHit = ProjectileUtil.getEntityHitResult(player, from, to, box,
@@ -161,7 +159,7 @@ public final class PlayerOps {
 
         var block = (BlockHitResult) closest;
         json.addProperty("type", "block");
-        json.addProperty("block", blockId(player.level().getBlockState(block.getBlockPos())));
+        json.addProperty("block", blockId(McApi.vanilla().level(player).getBlockState(block.getBlockPos())));
         json.add("pos", arrayOf(block.getBlockPos().getX(), block.getBlockPos().getY(), block.getBlockPos().getZ()));
         json.addProperty("face", block.getDirection().getName());
         json.addProperty("distance", round(from.distanceTo(block.getLocation())));
@@ -176,7 +174,7 @@ public final class PlayerOps {
         var direction = player.getViewVector(1.0F).normalize();
 
         var candidates = new ArrayList<Entity>();
-        for (var entity : player.level().getEntities(player, player.getBoundingBox().inflate(range))) {
+        for (var entity : McApi.vanilla().level(player).getEntities(player, player.getBoundingBox().inflate(range))) {
             var offset = entity.getEyePosition().subtract(eye);
             if (offset.length() > range || offset.lengthSqr() < 1.0E-4D) {
                 continue;
@@ -207,10 +205,10 @@ public final class PlayerOps {
 
         var r = (int) clamp(radius <= 0 ? 16 : radius, 1, MAX_SEARCH_RADIUS);
         var minX = centre.getX() - r;
-        var minY = Math.max(level.getMinBuildHeight(), centre.getY() - r);
+        var minY = Math.max(McApi.vanilla().minY(level), centre.getY() - r);
         var minZ = centre.getZ() - r;
         var maxX = centre.getX() + r;
-        var maxY = Math.min(level.getMaxBuildHeight() - 1, centre.getY() + r);
+        var maxY = Math.min(McApi.vanilla().maxY(level), centre.getY() + r);
         var maxZ = centre.getZ() + r;
         if ((long) (maxX - minX + 1) * (maxY - minY + 1) * (maxZ - minZ + 1) > MAX_SEARCH_VOLUME) {
             throw new IllegalArgumentException("search box is too large; a radius of " + r
@@ -255,14 +253,15 @@ public final class PlayerOps {
         for (var property : state.getProperties()) {
             properties.addProperty(property.getName(), String.valueOf(state.getValue(property)));
         }
-        if (!properties.isEmpty()) {
+        // size() rather than isEmpty(): the two oldest targets ship a gson whose JsonObject has no isEmpty().
+        if (properties.size() > 0) {
             json.add("properties", properties);
         }
 
         json.addProperty("hardness", state.getDestroySpeed(level, pos));
         json.addProperty("lightEmission", state.getLightEmission());
         json.addProperty("air", state.isAir());
-        json.addProperty("blocksMotion", state.blocksMotion());
+        json.addProperty("blocksMotion", McApi.vanilla().blocksMotion(state));
         json.addProperty("liquid", !state.getFluidState().isEmpty());
         json.addProperty("biome", biomeId(level.getBiome(pos)));
         json.addProperty("above", blockId(level.getBlockState(pos.above())));
@@ -270,7 +269,7 @@ public final class PlayerOps {
 
         var blockEntity = level.getBlockEntity(pos);
         if (blockEntity != null) {
-            json.addProperty("blockEntity", registryId(BuiltInRegistries.BLOCK_ENTITY_TYPE, blockEntity.getType()));
+            json.addProperty("blockEntity", registryId(McApi.vanilla().blockEntityTypes(), blockEntity.getType()));
         }
         return json;
     }
@@ -312,14 +311,22 @@ public final class PlayerOps {
 
     /** An entity, a BlockPos, a {@code {x,y,z}} object or an {@code [x,y,z]} array, as a point. */
     public static Vec3 resolvePoint(Object target) {
-        return switch (target) {
-            case null -> null;
-            case Entity entity -> entity.position();
-            case BlockPos pos -> Vec3.atBottomCenterOf(pos);
-            case Vec3 vec -> vec;
-            case JsonElement json -> pointFromJson(json);
-            default -> null;
-        };
+        if (target == null) {
+            return null;
+        }
+        if (target instanceof Entity entity) {
+            return entity.position();
+        }
+        if (target instanceof BlockPos pos) {
+            return Vec3.atBottomCenterOf(pos);
+        }
+        if (target instanceof Vec3 vec) {
+            return vec;
+        }
+        if (target instanceof JsonElement json) {
+            return pointFromJson(json);
+        }
+        return null;
     }
 
     private static Vec3 pointFromJson(JsonElement json) {
@@ -353,7 +360,7 @@ public final class PlayerOps {
         var x = (-sin * forward - cos * strafe) * speed;
         var z = (cos * forward - sin * strafe) * speed;
 
-        if (jump && player.onGround()) {
+        if (jump && McApi.vanilla().onGround(player)) {
             player.setDeltaMovement(x, 0.42D, z);
         } else {
             player.setDeltaMovement(x, player.getDeltaMovement().y, z);
@@ -388,7 +395,7 @@ public final class PlayerOps {
      */
     public static JsonArray collect(Player player, double radius) {
         var picked = new JsonArray();
-        for (var entity : player.level().getEntities(player, player.getBoundingBox().inflate(radius))) {
+        for (var entity : McApi.vanilla().level(player).getEntities(player, player.getBoundingBox().inflate(radius))) {
             if (!(entity instanceof net.minecraft.world.entity.item.ItemEntity drop) || drop.isRemoved()) {
                 continue;
             }
@@ -427,7 +434,7 @@ public final class PlayerOps {
         if (!(player instanceof ServerPlayer server)) {
             throw new IllegalStateException("using an item must be driven on the server side; use side=server");
         }
-        return server.gameMode.useItem(server, server.level(), server.getInventory().getSelected(),
+        return server.gameMode.useItem(server, McApi.vanilla().level(server), McApi.vanilla().selectedStack(server),
                 InteractionHand.MAIN_HAND).consumesAction();
     }
 
@@ -445,10 +452,10 @@ public final class PlayerOps {
             throw new IllegalArgumentException("face must be one of up, down, north, south, east, west");
         }
 
-        var level = server.level();
-        var hit = new BlockHitResult(Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(direction.getNormal()).scale(0.5D)),
+        var level = McApi.vanilla().level(server);
+        var hit = new BlockHitResult(Vec3.atCenterOf(pos).add(Vec3.atLowerCornerOf(McApi.vanilla().directionStep(direction)).scale(0.5D)),
                 direction, pos, false);
-        return server.gameMode.useItemOn(server, level, server.getInventory().getSelected(),
+        return server.gameMode.useItemOn(server, level, McApi.vanilla().selectedStack(server),
                 InteractionHand.MAIN_HAND, hit).consumesAction();
     }
 
@@ -459,26 +466,24 @@ public final class PlayerOps {
         var inventory = player.getInventory();
         var array = new JsonArray();
 
-        for (var holder : recipes(player)) {
-            if (!(holder.value() instanceof CraftingRecipe recipe)) {
-                continue;
-            }
+        for (var recipeEntry : McApi.vanilla().craftingRecipes(player)) {
             if (limit > 0 && array.size() >= limit) {
                 break;
             }
 
+            var recipe = recipeEntry.recipe();
             var plan = plan(recipe, inventory);
             if (plan == null) {
                 continue;
             }
 
-            var result = recipe.getResultItem(player.level().registryAccess());
+            var result = McApi.vanilla().craftingResult(player, recipe);
             if (result.isEmpty()) {
                 continue;
             }
 
             var entry = new JsonObject();
-            entry.addProperty("recipe", holder.id().toString());
+            entry.addProperty("recipe", recipeEntry.id());
             entry.addProperty("output", result.getCount() + "x " + itemId(result.getItem()));
             entry.addProperty("consumes", describe(plan));
             array.add(entry);
@@ -495,17 +500,14 @@ public final class PlayerOps {
      */
     public static JsonObject craft(Player player, String recipeId, int times) {
         var wanted = recipeId == null ? "" : recipeId.trim().toLowerCase(Locale.ROOT);
-        var exact = new ArrayList<RecipeHolder<?>>();
-        var partial = new ArrayList<RecipeHolder<?>>();
-        for (var holder : recipes(player)) {
-            if (!(holder.value() instanceof CraftingRecipe)) {
-                continue;
-            }
-            var id = holder.id().toString().toLowerCase(Locale.ROOT);
+        var exact = new ArrayList<VanillaApi.RecipeEntry>();
+        var partial = new ArrayList<VanillaApi.RecipeEntry>();
+        for (var recipeEntry : McApi.vanilla().craftingRecipes(player)) {
+            var id = recipeEntry.id().toLowerCase(Locale.ROOT);
             if (id.equals(wanted) || id.equals("minecraft:" + wanted)) {
-                exact.add(holder);
+                exact.add(recipeEntry);
             } else if (id.contains(wanted)) {
-                partial.add(holder);
+                partial.add(recipeEntry);
             }
         }
         // A full id wins outright: "minecraft:stick" must not be beaten by "minecraft:sticky_piston".
@@ -515,8 +517,8 @@ public final class PlayerOps {
         }
         if (matches.size() > 1) {
             var ids = new ArrayList<String>();
-            for (var holder : matches) {
-                ids.add(holder.id().toString());
+            for (var recipeEntry : matches) {
+                ids.add(recipeEntry.id());
                 if (ids.size() >= 8) {
                     break;
                 }
@@ -525,8 +527,8 @@ public final class PlayerOps {
                     + String.join(", ", ids) + "; use the full id");
         }
 
-        var holder = matches.get(0);
-        var recipe = (CraftingRecipe) holder.value();
+        var recipeEntry = matches.get(0);
+        var recipe = recipeEntry.recipe();
         var inventory = player.getInventory();
         var rounds = (int) clamp(times <= 0 ? 1 : times, 1, 64);
         var crafted = 0;
@@ -540,7 +542,7 @@ public final class PlayerOps {
                 consume(inventory, item);
             }
 
-            var result = recipe.getResultItem(player.level().registryAccess()).copy();
+            var result = McApi.vanilla().craftingResult(player, recipe).copy();
             if (!inventory.add(result)) {
                 player.drop(result, false);
             }
@@ -548,17 +550,17 @@ public final class PlayerOps {
         }
 
         if (crafted == 0) {
-            throw new IllegalStateException("the inventory does not hold the ingredients for " + holder.id());
+            throw new IllegalStateException("the inventory does not hold the ingredients for " + recipeEntry.id());
         }
         if (player instanceof ServerPlayer server) {
             server.containerMenu.broadcastChanges();
         }
 
         var json = new JsonObject();
-        json.addProperty("recipe", holder.id().toString());
+        json.addProperty("recipe", recipeEntry.id());
         json.addProperty("crafted", crafted);
-        json.addProperty("output", recipe.getResultItem(player.level().registryAccess()).getCount()
-                + "x " + itemId(recipe.getResultItem(player.level().registryAccess()).getItem()));
+        json.addProperty("output", McApi.vanilla().craftingResult(player, recipe).getCount()
+                + "x " + itemId(McApi.vanilla().craftingResult(player, recipe).getItem()));
         return json;
     }
 
@@ -575,8 +577,8 @@ public final class PlayerOps {
         }
 
         var needed = new ArrayList<Ingredient>();
-        for (var ingredient : recipe.getIngredients()) {
-            if (!ingredient.isEmpty()) {
+        for (var ingredient : McApi.vanilla().craftingIngredients(recipe)) {
+            if (!McApi.vanilla().ingredientEmpty(ingredient)) {
                 needed.add(ingredient);
             }
         }
@@ -585,17 +587,17 @@ public final class PlayerOps {
             return null;
         }
         // Rarest first, which is what makes a greedy assignment correct for normal recipes.
-        needed.sort(Comparator.comparingInt(ingredient -> ingredient.getItems().length));
+        needed.sort(Comparator.comparingInt(ingredient -> McApi.vanilla().ingredientItems(ingredient).size()));
 
         var plan = new ArrayList<Item>();
         for (var ingredient : needed) {
             Item chosen = null;
             var best = 0;
-            for (var option : ingredient.getItems()) {
-                var have = available.getOrDefault(option.getItem(), 0);
+            for (var option : McApi.vanilla().ingredientItems(ingredient)) {
+                var have = available.getOrDefault(option, 0);
                 if (have > best) {
                     best = have;
-                    chosen = option.getItem();
+                    chosen = option;
                 }
             }
             if (chosen == null) {
@@ -628,26 +630,10 @@ public final class PlayerOps {
         return String.join(", ", parts);
     }
 
-    /** Every recipe the server knows. Empty on a client, which has no recipe manager. */
-    private static List<RecipeHolder<?>> recipes(Player player) {
-        if (player instanceof ServerPlayer server) {
-            var minecraftServer = server.getServer();
-            if (minecraftServer != null) {
-                return new ArrayList<>(minecraftServer.getRecipeManager().getRecipes());
-            }
-        }
-        var level = player.level();
-        if (level instanceof net.minecraft.server.level.ServerLevel serverLevel) {
-            var minecraftServer = serverLevel.getServer();
-            return new ArrayList<>(minecraftServer.getRecipeManager().getRecipes());
-        }
-        return List.of();
-    }
-
     /** Everything a script needs to know about an entity before deciding what to do with it. */
     private static JsonObject describe(Player viewer, Entity entity) {
         var json = new JsonObject();
-        json.addProperty("type", registryId(BuiltInRegistries.ENTITY_TYPE, entity.getType()));
+        json.addProperty("type", registryId(McApi.vanilla().entityTypes(), entity.getType()));
         json.addProperty("name", entity.getName().getString());
         json.add("pos", arrayOf(entity.getX(), entity.getY(), entity.getZ()));
         json.addProperty("distance", round(viewer.distanceTo(entity)));
@@ -702,24 +688,20 @@ public final class PlayerOps {
     }
 
     private static String blockId(BlockState state) {
-        return registryId(BuiltInRegistries.BLOCK, state.getBlock());
+        return registryId(McApi.vanilla().blocks(), state.getBlock());
     }
 
     private static String itemId(Item item) {
-        return registryId(BuiltInRegistries.ITEM, item);
-    }
-
-    private static String effectId(Holder<MobEffect> effect) {
-        return effect.unwrapKey().map(key -> key.location().toString()).orElse("unknown");
+        return registryId(McApi.vanilla().items(), item);
     }
 
     private static String biomeId(Holder<net.minecraft.world.level.biome.Biome> biome) {
-        return biome.unwrapKey().map(key -> key.location().toString()).orElse("unknown");
+        return biome.unwrapKey().map(McApi.vanilla()::keyId).orElse("unknown");
     }
 
-    private static <T> String registryId(Registry<T> registry, T value) {
-        var key = registry.getKey(value);
-        return key == null ? "unregistered" : key.toString();
+    private static <T> String registryId(VanillaApi.Lookup<T> registry, T value) {
+        var key = registry.idOf(value);
+        return key == null ? "unregistered" : key;
     }
 
     private static JsonArray arrayOf(double... values) {

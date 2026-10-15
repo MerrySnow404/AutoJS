@@ -1,9 +1,9 @@
 package cc.sighs.autojs.neoforge.client;
 
+import cc.sighs.autojs.mc.McApi;
 import cc.sighs.autojs.neoforge.script.AutoJSTools;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.AccessibilityOnboardingScreen;
 import net.minecraft.client.gui.screens.ConnectScreen;
 import net.minecraft.client.gui.screens.DeathScreen;
 import net.minecraft.client.gui.screens.DisconnectedScreen;
@@ -16,6 +16,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractFurnaceScreen;
 import net.minecraft.client.gui.screens.inventory.CraftingScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
+import net.minecraft.client.player.Input;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 
@@ -46,7 +47,7 @@ public final class ClientScriptBridge implements AutoJSTools.ClientBridge {
     public JsonObject snapshot() {
         var minecraft = Minecraft.getInstance();
         var json = new JsonObject();
-        json.addProperty("fps", minecraft.getFps());
+        json.addProperty("fps", McApi.client().fps());
         json.addProperty("window", minecraft.getWindow().getWidth() + "x" + minecraft.getWindow().getHeight());
         json.addProperty("hostingWorld", minecraft.hasSingleplayerServer());
         return json;
@@ -66,7 +67,7 @@ public final class ClientScriptBridge implements AutoJSTools.ClientBridge {
         if (screen instanceof TitleScreen) {
             return "at the main menu";
         }
-        if (screen instanceof AccessibilityOnboardingScreen) {
+        if (McApi.client().isFirstRunScreen(screen)) {
             return "at the first-run accessibility screen";
         }
         if (screen instanceof LevelLoadingScreen || screen instanceof ReceivingLevelScreen) {
@@ -120,7 +121,7 @@ public final class ClientScriptBridge implements AutoJSTools.ClientBridge {
         return json;
     }
 
-    private AutoJSInput drivenInput;
+    private Input drivenInput;
 
     /**
      * Drive the local player's movement from a script, the way a keyboard would: the client's own physics
@@ -142,7 +143,7 @@ public final class ClientScriptBridge implements AutoJSTools.ClientBridge {
         }
 
         if (drivenInput == null || player.input != drivenInput) {
-            drivenInput = new AutoJSInput();
+            drivenInput = McApi.client().scriptInput();
             player.input = drivenInput;
         }
 
@@ -183,7 +184,7 @@ public final class ClientScriptBridge implements AutoJSTools.ClientBridge {
         if (player == null || minecraft.level == null) {
             return "a world";
         }
-        return minecraft.level.dimension().location() + " at " + AutoJSTools.formatPos(player.blockPosition());
+        return McApi.vanilla().keyId(minecraft.level.dimension()) + " at " + AutoJSTools.formatPos(player.blockPosition());
     }
 
     private static String titleOf(Screen screen) {

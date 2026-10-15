@@ -1,10 +1,14 @@
 // Standalone build for the shared source tree.
 //
 // common/ holds every piece of code that has no confirmed loader/version
-// difference. It MAY reference Minecraft, NeoForge and KubeJS types: the split
-// rule is "a confirmed version difference", not "platform independence". It
-// compiles against the same NeoForge 1.21.1 classpath as
-// targets/neoforge-1.21.1, so it can be built and tested on its own:
+// difference: the MCP endpoint, the side registry and the SPI a target
+// implements (side/, engine/). It MAY reference Minecraft and NeoForge types —
+// the split rule is "a confirmed version difference", not "platform
+// independence" — but it no longer references any KubeJS or Rhino type: script
+// engines are generation-bound, so each one lives in the target that has that
+// generation (see targets/neoforge-1.21.1/build.gradle). It still compiles
+// against the same NeoForge 1.21.1 classpath as targets/neoforge-1.21.1, so it
+// can be built and tested on its own:
 //
 //     gradlew -p common build
 //
@@ -46,12 +50,19 @@ repositories {
 }
 
 dependencies {
-    // Rhino, the script engine the kernel in rhino/ runs on. A hard dependency, on the same version KubeJS
-    // depends on, so a KubeJS mode never loads two Rhinos.
+    // Rhino and KubeJS are kept on this build's classpath although no source in
+    // common/ references either any more (the script engines moved into the
+    // targets). They stay so that `gradlew -p common build` compiles against
+    // exactly the classpath a target does — which is what makes "does this file
+    // have a confirmed version difference?" answerable by a plain compile here —
+    // and so a future shared file may use them if it truly has none.
+    //
+    // Rhino, on the same version KubeJS depends on, so a KubeJS mode never loads
+    // two Rhinos.
     implementation "dev.latvian.mods:rhino:${rhino_version}"
 
-    // KubeJS APIs. Only the kubejs/ wiring and the KubeJS-specific classes mention KubeJS types, and the
-    // target turns this into a soft dependency at packaging time (compileOnly + runtimeOnly there).
+    // KubeJS APIs. The target turns this into a soft dependency at packaging time
+    // (compileOnly + runtimeOnly there).
     implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 
     testImplementation platform('org.junit:junit-bom:5.10.2')

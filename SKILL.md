@@ -91,6 +91,8 @@ curl -s -X POST http://127.0.0.1:25585/mcp -H 'Content-Type: application/json' \
 2. **AutoJS 的封装**（第 3 节）：省掉坐标、注册表查找、掉落拾取、发包之类的样板。它只是让你少写几行，缺什么方法都没关系——绕过去写 Java 即可。
 3. **KubeJS 自带的事件与预注册工具类**：通常是最省试错的一层，见下。
 
+**世代差异（同一个 `eval_js`，不同 KubeJS 世代里脚本侧的东西不一样）**：下面列的是 KubeJS 2101 一代的形状。已实测的差异——1.18.2（1802 世代）**没有 `Java` 全局**，取类要用小写 `java('fqcn')`，事件用老式 `onEvent('...')`（没有 `ServerEvents`/`PlayerEvents`/`BlockEvents` 这些命名空间），日志文件是 `logs/kubejs/<side>.txt`；那一代还有 `try/catch` 直接抛 `IllegalArgumentException` 的缺陷。`tags` 与 `nbt` 的命名空间/形状也随版本变（例如 `forge:rods` vs `c:rods`、`{Count:2b,…}` vs `{count:2,…}`）。先 `AutoJS.help()` 与实测探一下，别照抄另一代的写法。
+
 ### KubeJS 自带的东西，优先考虑（省大量试错）
 
 它们已经现成地放在每个脚本上下文里，**不用 import、不用查某个版本的 Java 签名**：

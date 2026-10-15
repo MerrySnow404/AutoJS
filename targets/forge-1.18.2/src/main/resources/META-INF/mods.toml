@@ -22,3 +22,23 @@ mandatory = true
 versionRange = "${minecraft_version_range}"
 ordering = "NONE"
 side = "BOTH"
+
+# KubeJS is a soft dependency: AutoJS drives a KubeJS script context when it is
+# installed and its own Rhino kernel when it is not.
+[[dependencies.${mod_id}]]
+modId = "kubejs"
+mandatory = false
+versionRange = "[1802,)"
+ordering = "AFTER"
+side = "BOTH"
+
+# Rhino is what the standalone kernel runs on, so it is required either way. On
+# this generation the artifact carrying this id is the plain `rhino` one from
+# Modrinth: its jar is both the Rhino library and the mod, and KubeJS depends on
+# the same jar, so the two modes never load two copies of it.
+[[dependencies.${mod_id}]]
+modId = "rhino"
+mandatory = true
+versionRange = "[1802,)"
+ordering = "NONE"
+side = "BOTH"

@@ -1,0 +1,98 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.mods",
+    "module": "rhino-fabric",
+    "version": "2001.2.2-build.17",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "net.fabricmc",
+          "module": "fabric-loader",
+          "version": {
+            "requires": "0.14.22"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "rhino-fabric-2001.2.2-build.17.jar",
+          "url": "rhino-fabric-2001.2.2-build.17.jar",
+          "size": 1741933,
+          "sha512": "733d5f7a01f8d4f4a5a7cac909301e2f725512fa6fffac7db8f179720c86648b58f90489f281b30643f682973607ab877001a4e330ee0a6ae4952f144ceae298",
+          "sha256": "e62bdbe70232c9d33c66f390009d4eaa45e3f64d4bb08abc9ef1369d4c80e1e3",
+          "sha1": "b142b070dfbe6c749f8de4ac05351350bd3228a5",
+          "md5": "b9e36700351fa8a1cfb56da4573ece55"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "net.fabricmc",
+          "module": "fabric-loader",
+          "version": {
+            "requires": "0.14.22"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "rhino-fabric-2001.2.2-build.17.jar",
+          "url": "rhino-fabric-2001.2.2-build.17.jar",
+          "size": 1741933,
+          "sha512": "733d5f7a01f8d4f4a5a7cac909301e2f725512fa6fffac7db8f179720c86648b58f90489f281b30643f682973607ab877001a4e330ee0a6ae4952f144ceae298",
+          "sha256": "e62bdbe70232c9d33c66f390009d4eaa45e3f64d4bb08abc9ef1369d4c80e1e3",
+          "sha1": "b142b070dfbe6c749f8de4ac05351350bd3228a5",
+          "md5": "b9e36700351fa8a1cfb56da4573ece55"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "rhino-fabric-2001.2.2-build.17-sources.jar",
+          "url": "rhino-fabric-2001.2.2-build.17-sources.jar",
+          "size": 746204,
+          "sha512": "ca5aecf3ca10b72185207b823438852c0ac7dede4456d6a7efd590fea10e93a72b1afd1d06c34f0b018d22977a8c4bc846f2ef06107f398266bfcc237e7b9119",
+          "sha256": "f0ed8f91b6cacfc4688bb7f4eea555e74f35fab00dd62837fa9c59870634e03e",
+          "sha1": "dc126e2ac0a2cbf7565869844163c5de8e0df8d8",
+          "md5": "872baf36acc8afd7ecc21ae0d8ddfffb"
+        }
+      ]
+    }
+  ]
+}

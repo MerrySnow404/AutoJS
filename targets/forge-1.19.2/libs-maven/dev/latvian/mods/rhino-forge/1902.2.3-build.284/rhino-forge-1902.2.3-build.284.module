@@ -1,0 +1,80 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.mods",
+    "module": "rhino-forge",
+    "version": "1902.2.3-build.284",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.4.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "rhino-forge-1902.2.3-build.284.jar",
+          "url": "rhino-forge-1902.2.3-build.284.jar",
+          "size": 1719247,
+          "sha512": "7692a1d13c7e2fb37531e113f41e183e85213b711fdc5daf48bead15da2dc49ac409c150813eb18aa8e5ee80d151d9278ad0b6617ea8a56e8734832b62198eba",
+          "sha256": "9d487e8fdfe1a24c85852e675f865601b8aa7f10484cea6a40644b2f078755be",
+          "sha1": "2d0b66d1bf4aaaa7674dc7bed355003383eefbde",
+          "md5": "250d4c2566b9b98d6a05b2ba0ad3f868"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "rhino-forge-1902.2.3-build.284.jar",
+          "url": "rhino-forge-1902.2.3-build.284.jar",
+          "size": 1719247,
+          "sha512": "7692a1d13c7e2fb37531e113f41e183e85213b711fdc5daf48bead15da2dc49ac409c150813eb18aa8e5ee80d151d9278ad0b6617ea8a56e8734832b62198eba",
+          "sha256": "9d487e8fdfe1a24c85852e675f865601b8aa7f10484cea6a40644b2f078755be",
+          "sha1": "2d0b66d1bf4aaaa7674dc7bed355003383eefbde",
+          "md5": "250d4c2566b9b98d6a05b2ba0ad3f868"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "rhino-forge-1902.2.3-build.284-sources.jar",
+          "url": "rhino-forge-1902.2.3-build.284-sources.jar",
+          "size": 721915,
+          "sha512": "697a2cc8a4e6fcd342b40eb9cc307b30a7bedb776c2997133d9bda22b487a15a816ec5665348bb1189d7814c24e4782b925fc85c4e6867f098d57587d2ac8f82",
+          "sha256": "872ea231db6f25c79710c9a12e1ed86b0b8d51548be673ba3be214862278a18f",
+          "sha1": "e5901cce74c0533dd43cef655105037dbf5c18a7",
+          "md5": "4baa23a703e4b97152f47b10f15ed2e1"
+        }
+      ]
+    }
+  ]
+}

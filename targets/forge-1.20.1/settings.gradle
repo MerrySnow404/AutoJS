@@ -13,7 +13,7 @@ plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention'
 }
 
-rootProject.name = 'SighsTemple-forge-1.20.1'
+rootProject.name = 'AutoJS-forge-1.20.1'
 
 // Attach the shared source tree as a composite build so IDEs (IntelliJ) import
 // common/ as a separate, independently-editable module with its own classpath.

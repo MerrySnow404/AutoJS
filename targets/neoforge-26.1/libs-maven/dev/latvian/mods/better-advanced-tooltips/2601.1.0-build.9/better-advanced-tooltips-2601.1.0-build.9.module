@@ -1,0 +1,117 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.mods",
+    "module": "better-advanced-tooltips",
+    "version": "2601.1.0-build.9",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.2.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "better-advanced-tooltips-2601.1.0-build.9.jar",
+          "url": "better-advanced-tooltips-2601.1.0-build.9.jar",
+          "size": 38177,
+          "sha512": "bc9a7cfffcb1bd05b4bb6136da6a128ea7f534de7a32a38f708efec40f46c3fa63d120eb255f35389d09250d70f737dcdb35608b6530cf44e678abf8e9e74ecd",
+          "sha256": "1aef8ecc6f1b6c1952fed84c0302101019b2eb43c27d254152913b05a675143f",
+          "sha1": "3bcf88a298926396a236146999d720b1784af570",
+          "md5": "4a262799e44d355f66747fa7e6f05906"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "better-advanced-tooltips-2601.1.0-build.9.jar",
+          "url": "better-advanced-tooltips-2601.1.0-build.9.jar",
+          "size": 38177,
+          "sha512": "bc9a7cfffcb1bd05b4bb6136da6a128ea7f534de7a32a38f708efec40f46c3fa63d120eb255f35389d09250d70f737dcdb35608b6530cf44e678abf8e9e74ecd",
+          "sha256": "1aef8ecc6f1b6c1952fed84c0302101019b2eb43c27d254152913b05a675143f",
+          "sha1": "3bcf88a298926396a236146999d720b1784af570",
+          "md5": "4a262799e44d355f66747fa7e6f05906"
+        }
+      ]
+    },
+    {
+      "name": "accessTransformersElements",
+      "attributes": {
+        "org.gradle.category": "accesstransformer"
+      },
+      "files": [
+        {
+          "name": "better-advanced-tooltips-2601.1.0-build.9-accesstransformer.cfg",
+          "url": "better-advanced-tooltips-2601.1.0-build.9-accesstransformer.cfg",
+          "size": 0,
+          "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+          "md5": "d41d8cd98f00b204e9800998ecf8427e"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "better-advanced-tooltips-2601.1.0-build.9-sources.jar",
+          "url": "better-advanced-tooltips-2601.1.0-build.9-sources.jar",
+          "size": 27632,
+          "sha512": "514d6d6452a7d63d6d4021eda1cd74b2060b5219e3882ccb8a474a741813e645c6a2e667792c6a3c0eb8182962c594d6f79aee29e06107d3e0240333ff928666",
+          "sha256": "8ade87b01513c4f633b436353317d47334c2c813317a74caebaf85dc4eefee57",
+          "sha1": "3c907fb018e6b96eaea6d1816256fc5e1dcef156",
+          "md5": "7842cd432559560b4d719264de836619"
+        }
+      ]
+    },
+    {
+      "name": "javadocElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "javadoc",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "better-advanced-tooltips-2601.1.0-build.9-javadoc.jar",
+          "url": "better-advanced-tooltips-2601.1.0-build.9-javadoc.jar",
+          "size": 4180367,
+          "sha512": "0ea081995d4bd45496e1ff6b1cc065245932664c1daf66e4e5d7b8f490475e62ec0f1e1046980c32cbf1087ff94c4623736b2135ed922b380f0cd0186ce9e5c9",
+          "sha256": "d2624bd8592902b2c5bbe614a317bc4ba9e1a1bb1b276dab450e46839df80c3b",
+          "sha1": "393255b6d01c9c21f9eea68972d848f605339c45",
+          "md5": "d91b3549606afba328ac817488834e1c"
+        }
+      ]
+    }
+  ]
+}

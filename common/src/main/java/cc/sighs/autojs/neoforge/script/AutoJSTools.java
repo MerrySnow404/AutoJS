@@ -1,5 +1,7 @@
 package cc.sighs.autojs.neoforge.script;
 
+import cc.sighs.autojs.mc.McApi;
+import cc.sighs.autojs.mc.VanillaApi;
 import cc.sighs.autojs.side.EvalSide;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,12 +9,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonWriter;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -27,9 +24,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -173,23 +167,18 @@ public class AutoJSTools {
     }
 
     public String[] mods() {
-        return ModList.get().getMods().stream().map(info -> info.getModId()).sorted().toArray(String[]::new);
+        return McApi.loader().modIds().stream().sorted().toArray(String[]::new);
     }
 
     public String modVersion(String modId) {
-        for (var info : ModList.get().getMods()) {
-            if (info.getModId().equals(modId)) {
-                return String.valueOf(info.getVersion());
-            }
-        }
-        return null;
+        return McApi.loader().modVersion(modId);
     }
 
     /** One call that answers "where am I": side, dist, what the game is doing, world, time, weather, player. */
     public String snapshot() {
         var json = new JsonObject();
         json.addProperty("side", side());
-        json.addProperty("dist", FMLEnvironment.dist.name());
+        json.addProperty("dist", McApi.loader().distName());
         json.addProperty("where", where());
 
         var server = server();
@@ -201,8 +190,8 @@ public class AutoJSTools {
 
         var level = level();
         if (level != null) {
-            json.addProperty("dimension", level.dimension().location().toString());
-            json.addProperty("dayTime", level.getDayTime());
+            json.addProperty("dimension", McApi.vanilla().keyId(level.dimension()));
+            json.addProperty("dayTime", McApi.vanilla().dayTime(level));
             json.addProperty("raining", level.isRaining());
             json.addProperty("thundering", level.isThundering());
             json.addProperty("difficulty", String.valueOf(level.getDifficulty()));
@@ -248,7 +237,7 @@ public class AutoJSTools {
         }
 
         var player = player();
-        var place = level.dimension().location() + " at "
+        var place = McApi.vanilla().keyId(level.dimension()) + " at "
                 + (player == null ? "no player" : formatPos(player.blockPosition()));
 
         var menu = menu();
@@ -283,29 +272,53 @@ public class AutoJSTools {
 
     /** A word for a container menu, vanilla or not: "crafting table", "container menu: MixerMenu". */
     public static String menuKind(AbstractContainerMenu menu) {
-        var kind = switch (menu) {
-            case InventoryMenu ignored -> "player inventory";
-            case CraftingMenu ignored -> "crafting table";
-            case CrafterMenu ignored -> "crafter";
-            case AbstractFurnaceMenu ignored -> "furnace";
-            case ChestMenu ignored -> "chest";
-            case ShulkerBoxMenu ignored -> "shulker box";
-            case HopperMenu ignored -> "hopper";
-            case DispenserMenu ignored -> "dispenser or dropper";
-            case AnvilMenu ignored -> "anvil";
-            case SmithingMenu ignored -> "smithing table";
-            case GrindstoneMenu ignored -> "grindstone";
-            case CartographyTableMenu ignored -> "cartography table";
-            case LoomMenu ignored -> "loom";
-            case StonecutterMenu ignored -> "stonecutter";
-            case EnchantmentMenu ignored -> "enchanting table";
-            case BrewingStandMenu ignored -> "brewing stand";
-            case BeaconMenu ignored -> "beacon";
-            case LecternMenu ignored -> "lectern";
-            case MerchantMenu ignored -> "villager trade";
-            case HorseInventoryMenu ignored -> "horse inventory";
-            default -> null;
-        };
+        // A menu kind only the newer versions have — the crafter — so that the chain below is the same on
+        // every version instead of being copied into the targets that predate it.
+        var added = McApi.vanilla().addedMenuKind(menu);
+        if (added != null) {
+            return added;
+        }
+
+        String kind = null;
+        if (menu instanceof InventoryMenu) {
+            kind = "player inventory";
+        } else if (menu instanceof CraftingMenu) {
+            kind = "crafting table";
+        } else if (menu instanceof AbstractFurnaceMenu) {
+            kind = "furnace";
+        } else if (menu instanceof ChestMenu) {
+            kind = "chest";
+        } else if (menu instanceof ShulkerBoxMenu) {
+            kind = "shulker box";
+        } else if (menu instanceof HopperMenu) {
+            kind = "hopper";
+        } else if (menu instanceof DispenserMenu) {
+            kind = "dispenser or dropper";
+        } else if (menu instanceof AnvilMenu) {
+            kind = "anvil";
+        } else if (menu instanceof SmithingMenu) {
+            kind = "smithing table";
+        } else if (menu instanceof GrindstoneMenu) {
+            kind = "grindstone";
+        } else if (menu instanceof CartographyTableMenu) {
+            kind = "cartography table";
+        } else if (menu instanceof LoomMenu) {
+            kind = "loom";
+        } else if (menu instanceof StonecutterMenu) {
+            kind = "stonecutter";
+        } else if (menu instanceof EnchantmentMenu) {
+            kind = "enchanting table";
+        } else if (menu instanceof BrewingStandMenu) {
+            kind = "brewing stand";
+        } else if (menu instanceof BeaconMenu) {
+            kind = "beacon";
+        } else if (menu instanceof LecternMenu) {
+            kind = "lectern";
+        } else if (menu instanceof MerchantMenu) {
+            kind = "villager trade";
+        } else if (menu instanceof HorseInventoryMenu) {
+            kind = "horse inventory";
+        }
         return kind != null ? kind : "container menu: " + menu.getClass().getSimpleName();
     }
 
@@ -328,23 +341,7 @@ public class AutoJSTools {
      * vanilla classes and for anything loaded from a development workspace.
      */
     public static String owningMod(Class<?> type) {
-        try {
-            var source = type.getProtectionDomain().getCodeSource();
-            if (source == null) {
-                return null;
-            }
-
-            var location = source.getLocation().toURI();
-            for (var info : ModList.get().getMods()) {
-                var file = info.getOwningFile().getFile().getFilePath();
-                if (file != null && file.toUri().equals(location)) {
-                    return info.getModId();
-                }
-            }
-        } catch (Exception ignored) {
-            // A missing or unreadable code source is normal in a development workspace.
-        }
-        return null;
+        return McApi.loader().owningMod(type);
     }
 
     // ------------------------------------------------------------------ area
@@ -538,81 +535,83 @@ public class AutoJSTools {
     // ---------------------------------------------------------------- lookup
 
     public Item item(String idOrName) {
-        return findOne(BuiltInRegistries.ITEM, idOrName, "item");
+        return findOne(McApi.vanilla().items(), idOrName, "item");
     }
 
     public Block block(String idOrName) {
-        return findOne(BuiltInRegistries.BLOCK, idOrName, "block");
+        return findOne(McApi.vanilla().blocks(), idOrName, "block");
     }
 
     public EntityType<?> entityType(String idOrName) {
-        return findOne(BuiltInRegistries.ENTITY_TYPE, idOrName, "entity type");
+        return findOne(McApi.vanilla().entityTypes(), idOrName, "entity type");
     }
 
-    /** The registry id of an item, block, entity type, stack, block state, entity or resource location. */
+    /**
+     * The registry id of an item, block, entity type, stack, block state or entity, and the text of anything
+     * else.
+     *
+     * <p>The fallback is a plain {@code String.valueOf}, which is also what an id value of this version gives:
+     * its own {@code toString} is the {@code "namespace:path"} text a script wants, so no branch here has to
+     * name the type that is spelled differently from one version to the next.
+     */
     public String id(Object thing) {
         if (thing == null) {
             return null;
         }
         if (thing instanceof ItemStack stack) {
-            return stack.isEmpty() ? null : String.valueOf(BuiltInRegistries.ITEM.getKey(stack.getItem()));
+            return stack.isEmpty() ? null : idText(McApi.vanilla().items(), stack.getItem());
         }
         if (thing instanceof Item item) {
-            return String.valueOf(BuiltInRegistries.ITEM.getKey(item));
+            return idText(McApi.vanilla().items(), item);
         }
         if (thing instanceof Block block) {
-            return String.valueOf(BuiltInRegistries.BLOCK.getKey(block));
+            return idText(McApi.vanilla().blocks(), block);
         }
         if (thing instanceof BlockState state) {
-            return String.valueOf(BuiltInRegistries.BLOCK.getKey(state.getBlock()));
+            return idText(McApi.vanilla().blocks(), state.getBlock());
         }
         if (thing instanceof EntityType<?> entityType) {
-            return String.valueOf(BuiltInRegistries.ENTITY_TYPE.getKey(entityType));
+            return idText(McApi.vanilla().entityTypes(), entityType);
         }
         if (thing instanceof Entity entity) {
-            return String.valueOf(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()));
-        }
-        if (thing instanceof ResourceLocation location) {
-            return location.toString();
+            return idText(McApi.vanilla().entityTypes(), entity.getType());
         }
         return String.valueOf(thing);
     }
 
     /** Registry ids of every tag an item, block, stack or block state belongs to. */
     public String[] tags(Object thing) {
-        Holder<?> holder = null;
-        // wrapAsHolder rather than builtInRegistryHolder: the latter is deprecated in this version.
         if (thing instanceof Item item) {
-            holder = BuiltInRegistries.ITEM.wrapAsHolder(item);
-        } else if (thing instanceof Block block) {
-            holder = BuiltInRegistries.BLOCK.wrapAsHolder(block);
-        } else if (thing instanceof BlockState state) {
-            holder = BuiltInRegistries.BLOCK.wrapAsHolder(state.getBlock());
-        } else if (thing instanceof ItemStack stack && !stack.isEmpty()) {
-            holder = BuiltInRegistries.ITEM.wrapAsHolder(stack.getItem());
+            return tagIds(McApi.vanilla().items(), item);
         }
-
-        return holder == null
-                ? new String[0]
-                : holder.tags().map(tag -> tag.location().toString()).sorted().toArray(String[]::new);
+        if (thing instanceof Block block) {
+            return tagIds(McApi.vanilla().blocks(), block);
+        }
+        if (thing instanceof BlockState state) {
+            return tagIds(McApi.vanilla().blocks(), state.getBlock());
+        }
+        if (thing instanceof ItemStack stack && !stack.isEmpty()) {
+            return tagIds(McApi.vanilla().items(), stack.getItem());
+        }
+        return new String[0];
     }
 
     public String[] findItems(String query, int limit) {
-        return find(BuiltInRegistries.ITEM, query, limit);
+        return find(McApi.vanilla().items(), query, limit);
     }
 
     public String[] findBlocks(String query, int limit) {
-        return find(BuiltInRegistries.BLOCK, query, limit);
+        return find(McApi.vanilla().blocks(), query, limit);
     }
 
     public String[] findEntities(String query, int limit) {
-        return find(BuiltInRegistries.ENTITY_TYPE, query, limit);
+        return find(McApi.vanilla().entityTypes(), query, limit);
     }
 
     // ------------------------------------------------------------------ read
 
     public MinecraftServer server() {
-        return ServerLifecycleHooks.getCurrentServer();
+        return McApi.loader().currentServer();
     }
 
     public Level level() {
@@ -652,12 +651,16 @@ public class AutoJSTools {
     }
 
     public BlockPos posOf(Object thing) {
-        return switch (thing) {
-            case BlockPos pos -> pos;
-            case Entity entity -> entity.blockPosition();
-            case BlockEntity blockEntity -> blockEntity.getBlockPos();
-            case null, default -> null;
-        };
+        if (thing instanceof BlockPos pos) {
+            return pos;
+        }
+        if (thing instanceof Entity entity) {
+            return entity.blockPosition();
+        }
+        if (thing instanceof BlockEntity blockEntity) {
+            return blockEntity.getBlockPos();
+        }
+        return null;
     }
 
     public BlockState blockAt(int x, int y, int z) {
@@ -687,14 +690,14 @@ public class AutoJSTools {
             return tag.toString();
         }
 
-        var registries = registries();
-        if (registries != null) {
-            if (thing instanceof ItemStack stack) {
-                return String.valueOf(stack.save(registries));
-            }
-            if (thing instanceof BlockEntity blockEntity) {
-                return String.valueOf(blockEntity.saveWithFullMetadata(registries));
-            }
+        var level = level();
+        if (thing instanceof ItemStack stack) {
+            var tag = McApi.vanilla().saveStack(level, stack);
+            return tag == null ? String.valueOf(thing) : String.valueOf(tag);
+        }
+        if (thing instanceof BlockEntity blockEntity) {
+            var tag = McApi.vanilla().saveBlockEntity(level, blockEntity);
+            return tag == null ? String.valueOf(thing) : String.valueOf(tag);
         }
         return String.valueOf(thing);
     }
@@ -736,7 +739,7 @@ public class AutoJSTools {
 
     public ItemStack held(Object who) {
         var player = who instanceof Player given ? given : player();
-        return player == null ? null : player.getInventory().getSelected();
+        return player == null ? null : McApi.vanilla().selectedStack(player);
     }
 
     // ------------------------------------------------------------------- act
@@ -744,7 +747,7 @@ public class AutoJSTools {
     /** Runs a vanilla command as the server. Every mod's command is in reach this way. */
     public void command(String command) {
         var server = requireServer("run commands");
-        server.getCommands().performPrefixedCommand(server.createCommandSourceStack(), command);
+        McApi.vanilla().runCommand(server, command);
     }
 
     /** Gives to every player, the same way {@code /give @a} does. */
@@ -771,27 +774,27 @@ public class AutoJSTools {
         if (type == null) {
             throw new IllegalArgumentException("no such entity type: " + entityType);
         }
-        var entity = type.create(level);
+        var entity = McApi.vanilla().createEntity(type, level);
         if (entity == null) {
             throw new IllegalStateException(type + " cannot be created in this level");
         }
-        entity.moveTo(x, y, z);
+        McApi.vanilla().moveEntity(entity, x, y, z);
         level.addFreshEntity(entity);
         return entity;
     }
 
     /** Ticks since the world started, so 0 is sunrise, 6000 noon, 12000 sunset, 18000 midnight. */
     public void setTime(long ticks) {
-        requireServerLevel("set the time").setDayTime(ticks);
+        McApi.vanilla().setDayTime(requireServerLevel("set the time"), ticks);
     }
 
     public void setWeather(String kind, int ticks) {
         var level = requireServerLevel("set the weather");
         var duration = Math.max(1, ticks);
         switch (kind.toLowerCase(Locale.ROOT)) {
-            case "clear" -> level.setWeatherParameters(duration, 0, false, false);
-            case "rain" -> level.setWeatherParameters(0, duration, true, false);
-            case "thunder" -> level.setWeatherParameters(0, duration, true, true);
+            case "clear" -> McApi.vanilla().setWeather(level, duration, 0, false, false);
+            case "rain" -> McApi.vanilla().setWeather(level, 0, duration, true, false);
+            case "thunder" -> McApi.vanilla().setWeather(level, 0, duration, true, true);
             default -> throw new IllegalArgumentException("weather must be clear, rain or thunder, not " + kind);
         }
     }
@@ -890,12 +893,14 @@ public class AutoJSTools {
     // ------------------------------------------------------------------ misc
 
     public ItemStack stack(Object itemOrId, int count) {
-        var resolved = switch (itemOrId) {
-            case Item given -> given;
-            case ItemStack existing -> existing.getItem();
-            case String id -> item(id);
-            case null, default -> null;
-        };
+        Item resolved = null;
+        if (itemOrId instanceof Item given) {
+            resolved = given;
+        } else if (itemOrId instanceof ItemStack existing) {
+            resolved = existing.getItem();
+        } else if (itemOrId instanceof String id) {
+            resolved = item(id);
+        }
         if (resolved == null) {
             throw new IllegalArgumentException("not an item: " + itemOrId);
         }
@@ -910,7 +915,7 @@ public class AutoJSTools {
 
     // --------------------------------------------------------------- helpers
 
-    private static <T> T findOne(Registry<T> registry, String idOrName, String what) {
+    private static <T> T findOne(VanillaApi.Lookup<T> registry, String idOrName, String what) {
         if (idOrName == null || idOrName.isBlank()) {
             throw new IllegalArgumentException("empty " + what + " name");
         }
@@ -932,20 +937,28 @@ public class AutoJSTools {
                 + "s: " + String.join(", ", matches) + "; use the full id");
     }
 
-    private static <T> T byId(Registry<T> registry, String id) {
-        var location = ResourceLocation.tryParse(id.contains(":") ? id : "minecraft:" + id);
-        return location == null ? null : registry.getOptional(location).orElse(null);
+    private static <T> T byId(VanillaApi.Lookup<T> registry, String id) {
+        return registry.get(id.contains(":") ? id : "minecraft:" + id);
     }
 
-    private static <T> String[] find(Registry<T> registry, String query, int limit) {
+    private static <T> String[] find(VanillaApi.Lookup<T> registry, String query, int limit) {
         var needle = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
         var max = limit <= 0 ? 50 : limit;
-        return registry.keySet().stream()
-                .map(ResourceLocation::toString)
+        return registry.ids().stream()
                 .filter(id -> id.toLowerCase(Locale.ROOT).contains(needle))
                 .sorted()
                 .limit(max)
                 .toArray(String[]::new);
+    }
+
+    /** The id a value is registered under, as text; a script sees "null" when it has none. */
+    private static <T> String idText(VanillaApi.Lookup<T> registry, T value) {
+        return String.valueOf(registry.idOf(value));
+    }
+
+    /** The registry ids of every tag a value belongs to, sorted. */
+    private static <T> String[] tagIds(VanillaApi.Lookup<T> registry, T value) {
+        return registry.tagIds(value).stream().sorted().toArray(String[]::new);
     }
 
     private static Block resolveBlock(Object block) {
@@ -956,8 +969,7 @@ public class AutoJSTools {
             return state.getBlock();
         }
         if (block instanceof String id) {
-            var location = ResourceLocation.tryParse(id.contains(":") ? id : "minecraft:" + id);
-            var found = location == null ? null : BuiltInRegistries.BLOCK.getOptional(location).orElse(null);
+            var found = McApi.vanilla().blocks().get(id.contains(":") ? id : "minecraft:" + id);
             if (found != null) {
                 return found;
             }
@@ -966,9 +978,10 @@ public class AutoJSTools {
     }
 
     private String requireItemId(Object item) {
+        var registry = McApi.vanilla().items();
         var resolved = item instanceof Item given ? given : item instanceof ItemStack stack ? stack.getItem() : null;
-        var id = resolved == null ? id(item) : String.valueOf(BuiltInRegistries.ITEM.getKey(resolved));
-        if (id == null || BuiltInRegistries.ITEM.getOptional(ResourceLocation.tryParse(id)).isEmpty()) {
+        var id = resolved == null ? id(item) : String.valueOf(registry.idOf(resolved));
+        if (id == null || registry.get(id) == null) {
             throw new IllegalArgumentException("not an item: " + item);
         }
         return id;
@@ -1007,14 +1020,9 @@ public class AutoJSTools {
         return requireServer(action).overworld();
     }
 
-    private HolderLookup.Provider registries() {
-        var level = level();
-        return level == null ? null : level.registryAccess();
-    }
-
     private Path file(String path) {
         var file = Path.of(path);
-        return file.isAbsolute() ? file : net.neoforged.fml.loading.FMLPaths.GAMEDIR.get().resolve(path);
+        return file.isAbsolute() ? file : McApi.loader().gameDir().resolve(path);
     }
 
     public static String formatPos(BlockPos pos) {

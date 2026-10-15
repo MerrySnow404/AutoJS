@@ -33,7 +33,6 @@ java {
 sourceSets {
     main {
         java.srcDir "$buildDir/generated/common-main"
-        resources.srcDir 'src/generated/resources'
     }
     test {
         java.srcDir '../../common/src/test/java'
@@ -45,14 +44,62 @@ tasks.register('prepareCommonSources', Sync) {
     from('../../common/src/main/java') {
         // This target's version differences are registered here: exclude one
         // path per common file that this target replaces with its own
-        // implementation, for example
-        //     exclude 'com/example/network/ChunkPacket.java'
-        // Everything not listed here stays shared with every other target.
+        // implementation. Everything not listed here stays shared with every
+        // other target.
+        //
+        // The paths below are common's own package (cc.sighs.autojs.neoforge),
+        // because that is where the shared copy lives; this target's
+        // replacements live under cc.sighs.autojs.forge and are listed one by one
+        // in the report. Every excluded path is a file whose whole reason to
+        // exist is a KubeJS generation (2101 in common), a Rhino generation
+        // (2101 in common) or a loader API, so none of them can compile here.
+        //
+        // Script-engine axis.
+        exclude 'cc/sighs/autojs/neoforge/AbstractKubeJSSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSConsole.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSEvaluator.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSScriptManagers.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSKubeJSPlugin.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSUnrestricted.java'
+        exclude 'cc/sighs/autojs/neoforge/backend/RhinoSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/client/ClientEvalBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/eval/ScriptValue.java'
+        exclude 'cc/sighs/autojs/neoforge/kubejs/KubeJSIntegration.java'
+        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoEngine.java'
+        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoBindings.java'
+        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoRuntime.java'
+        exclude 'cc/sighs/autojs/neoforge/server/ServerEvalBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/tools/KubeJSLogTool.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedAccess.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedContextFactory.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSContext.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSServerContext.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedPathWrappers.java'
+
+        // Loader axis: the mod constructor, its client half and the engine
+        // selection facade are the only files whose FML usage is their whole
+        // reason to exist.
+        exclude 'cc/sighs/autojs/neoforge/AutoJSBackends.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForge121.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForgeClient.java'
+
+        // Minecraft API axis: the three implementations of the interfaces
+        // cc.sighs.autojs.mc hands out, plus the Input subclass the client
+        // bridge drives (net.minecraft.client.player.Input itself is what
+        // changed, so only this target has this Input).
+        exclude 'cc/sighs/autojs/neoforge/client/AutoJSInput.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSClient.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSLoader.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSVanilla.java'
     }
     into "$buildDir/generated/common-main"
 }
 tasks.named('compileJava').configure { dependsOn 'prepareCommonSources' }
-tasks.named('sourcesJar', Jar).configure { dependsOn 'prepareCommonSources' }
+tasks.named('sourcesJar', Jar).configure {
+    dependsOn 'prepareCommonSources'
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 legacyForge {
     version = "${forge_minecraft_version}-${forge_version}"
@@ -98,13 +145,86 @@ legacyForge {
     }
 }
 
+// maven.neoforged.net is a default artifact repository of the ModDevGradle plugins
+// and is not reachable from every build machine: the connection times out, which
+// Gradle treats as a fatal repository error rather than as "not found", so a
+// resolution that touches it fails instead of falling through to the next
+// repository. Two of the artifacts this target needs live only there —
+// de.oceanlabs.mcp:mcp_config (also served by maven.minecraftforge.net, so the
+// repository below covers that one) and net.neoforged:minecraft-dependencies,
+// which is the module that supplies Minecraft's libraries and which nothing else
+// serves.
+//
+// -Pautojs.localToolchain is for a machine in that position. It adds libs-maven
+// ahead of the repositories it stands in for, where minecraft-dependencies and
+// the KubeJS 2001 artifacts are kept; that directory's README says what each one
+// is and how far it is verified. Use it together with --offline, because the
+// pipeline's own tools (the neoform runtime among them) come from the same
+// unreachable host and are already in the Gradle cache — Gradle keys cached
+// metadata to the repository it came from, so the repository has to stay
+// registered for that cache to be readable at all.
+//
+// Without the flag nothing here takes effect: a machine with working access to
+// maven.neoforged.net resolves every real artifact and libs-maven is never
+// consulted.
+def localToolchain = providers.gradleProperty('autojs.localToolchain')
+
 repositories {
     mavenCentral()
+
+    // Local copies, ahead of the repositories they stand in for. Three things are in
+    // here: net.neoforged:minecraft-dependencies, which is generated (see
+    // libs-maven/README.md); the KubeJS 2001 artifacts from maven.latvian.dev,
+    // which are the published files fetched out of band because Gradle's own HTTP
+    // client is reset by that host from this machine; and the two mods KubeJS needs
+    // at runtime, architectury and MixinExtras, which would otherwise be fetched
+    // over the network from repositories the rest of this build cannot use offline.
+    if (localToolchain.isPresent()) {
+        maven {
+            name = "LocalToolchain"
+            url = uri('libs-maven')
+            content {
+                includeGroup "net.neoforged"
+                includeGroup "dev.latvian.mods"
+                includeGroup "dev.architectury"
+                includeGroup "io.github.llamalad7"
+            }
+        }
+    }
+
+    // Forge's own maven, deliberately unfiltered. A `includeGroup "net.minecraftforge"`
+    // filter would be the tidier statement of what it is for, but the legacy
+    // toolchain this target builds with also needs de.oceanlabs.mcp:mcp_config,
+    // and maven.minecraftforge.net is the reachable place that publishes it.
     maven {
         name = "MinecraftForge"
         url = "https://maven.minecraftforge.net/"
+    }
+    // Rhino and KubeJS on the 2001 generation this Minecraft version uses. Both
+    // are only published here for this generation.
+    maven {
+        name = "Latvian"
+        url = "https://maven.latvian.dev/releases"
         content {
-            includeGroup "net.minecraftforge"
+            includeGroup "dev.latvian.mods"
+        }
+    }
+    // Rhino's own runtime dependency on the Fabric loader. Rhino is a
+    // loader-agnostic artifact, so this is what its pom declares on every loader.
+    maven {
+        name = "Fabric"
+        url = "https://maven.fabricmc.net/"
+        content {
+            includeGroup "net.fabricmc"
+        }
+    }
+    // Architectury, which KubeJS 2001 requires at runtime but which AutoJS never
+    // names: added so runClient/runServer load KubeJS at all.
+    maven {
+        name = "Architectury"
+        url = "https://maven.architectury.dev/"
+        content {
+            includeGroup "dev.architectury"
         }
     }
     maven {
@@ -124,6 +244,43 @@ repositories {
 }
 
 dependencies {
+    // Rhino, the script engine AutoJS embeds so that KubeJS can be optional.
+    // Always on the classpath: it is what the standalone kernel runs on, and
+    // mods.toml declares it a required mod dependency.
+    //
+    // Its own runtime dependency on the Fabric loader is dropped: Rhino is a
+    // loader-agnostic artifact and declares that one so a Fabric install has it,
+    // while on Forge the loader comes from the rhino-forge mod that FML loads.
+    // Nothing in AutoJS reaches it either way.
+    implementation("dev.latvian.mods:rhino:${rhino_version}") {
+        exclude group: 'net.fabricmc', module: 'fabric-loader'
+    }
+
+    // The mod that actually satisfies mods.toml's mandatory `rhino` dependency on this generation. Here the
+    // plain `rhino` artifact is the library and the loader-suffixed jar carries the mods.toml (the 1.21.1 line
+    // shipped the mod inside `rhino` itself, which is why the baseline target does not declare this).
+    runtimeOnly "dev.latvian.mods:rhino-forge:${rhino_version}"
+
+    // KubeJS APIs used by AutoJS. compileOnly because KubeJS is a soft
+    // dependency: the mod has to load and run without it. runtimeOnly puts it
+    // back on the dev runtime classpath, so runClient/runServer still exercise
+    // the KubeJS mode.
+    compileOnly "dev.latvian.mods:kubejs-forge:${kubejs_version}"
+    // Runtime-only, like the baseline: the soft dependency has to be absent-able, and its presence is what makes
+    // KubeJS mode reachable.
+    //
+    // NOTE for anyone running this target in *dev*: Forge 1.20.1 production jars are SRG-mapped, and the
+    // ModDevGradle dev runtime is official-mapped (build/moddev/artifacts only ever contains
+    // intermediate<->named mappings), so these jars' mixins fail with `@Shadow method m_XXXXXX_ was not located
+    // in the target class` — for KubeJS and for rhino alike. Rhino is a required mod dependency, so a dev run
+    // cannot start at all here. Verify this target against a *production* install (Forge installer + reobf jar
+    // + the production KubeJS/Rhino jars in run/mods) instead of a dev run.
+    runtimeOnly "dev.latvian.mods:kubejs-forge:${kubejs_version}"
+
+    // KubeJS's own runtime dependency, loaded by FML rather than referenced by
+    // any AutoJS source.
+    runtimeOnly "dev.architectury:architectury-forge:9.1.12"
+
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testImplementation 'com.google.code.gson:gson:2.10.1'

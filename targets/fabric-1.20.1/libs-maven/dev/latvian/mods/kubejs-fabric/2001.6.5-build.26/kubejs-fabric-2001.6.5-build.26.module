@@ -1,0 +1,161 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.mods",
+    "module": "kubejs-fabric",
+    "version": "2001.6.5-build.26",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "net.fabricmc",
+          "module": "fabric-loader",
+          "version": {
+            "requires": "0.15.0"
+          }
+        },
+        {
+          "group": "net.fabricmc.fabric-api",
+          "module": "fabric-api",
+          "version": {
+            "requires": "0.91.0+1.20.1"
+          }
+        },
+        {
+          "group": "net.fabricmc.fabric-api",
+          "module": "fabric-api-deprecated",
+          "version": {
+            "requires": "0.91.0+1.20.1"
+          }
+        },
+        {
+          "group": "dev.architectury",
+          "module": "architectury-fabric",
+          "version": {
+            "requires": "9.1.12"
+          }
+        },
+        {
+          "group": "dev.latvian.mods",
+          "module": "rhino-fabric",
+          "version": {
+            "requires": "2001.2.2-build.17"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kubejs-fabric-2001.6.5-build.26.jar",
+          "url": "kubejs-fabric-2001.6.5-build.26.jar",
+          "size": 1608326,
+          "sha512": "4f3959a03a18a14627e6f8fc06cb0f050af69e1b74a26cdfdb2cd833ee7b959004f9bacf397e055afdc069023270602c310bb212ddff2806d0318890e8959179",
+          "sha256": "e1a3f3fe1190635b8fe6469e28c21969f17183a0fafb3e69c21709c564894923",
+          "sha1": "08d70c86bb9501eeaf936722784c09de18f0e32f",
+          "md5": "22c58d49c7164a7f6c0af34ec198f6d7"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "io.github.llamalad7",
+          "module": "mixinextras-fabric",
+          "version": {
+            "requires": "0.2.0-rc.2"
+          }
+        },
+        {
+          "group": "net.fabricmc",
+          "module": "fabric-loader",
+          "version": {
+            "requires": "0.15.0"
+          }
+        },
+        {
+          "group": "net.fabricmc.fabric-api",
+          "module": "fabric-api",
+          "version": {
+            "requires": "0.91.0+1.20.1"
+          }
+        },
+        {
+          "group": "net.fabricmc.fabric-api",
+          "module": "fabric-api-deprecated",
+          "version": {
+            "requires": "0.91.0+1.20.1"
+          }
+        },
+        {
+          "group": "dev.architectury",
+          "module": "architectury-fabric",
+          "version": {
+            "requires": "9.1.12"
+          }
+        },
+        {
+          "group": "dev.latvian.mods",
+          "module": "rhino-fabric",
+          "version": {
+            "requires": "2001.2.2-build.17"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "kubejs-fabric-2001.6.5-build.26.jar",
+          "url": "kubejs-fabric-2001.6.5-build.26.jar",
+          "size": 1608326,
+          "sha512": "4f3959a03a18a14627e6f8fc06cb0f050af69e1b74a26cdfdb2cd833ee7b959004f9bacf397e055afdc069023270602c310bb212ddff2806d0318890e8959179",
+          "sha256": "e1a3f3fe1190635b8fe6469e28c21969f17183a0fafb3e69c21709c564894923",
+          "sha1": "08d70c86bb9501eeaf936722784c09de18f0e32f",
+          "md5": "22c58d49c7164a7f6c0af34ec198f6d7"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "kubejs-fabric-2001.6.5-build.26-sources.jar",
+          "url": "kubejs-fabric-2001.6.5-build.26-sources.jar",
+          "size": 677577,
+          "sha512": "93d5363b6336d072f4a613c72976c8b177a775f9907d7d922630beb3090c013fab7896f2f512e6ddf4fb66a2c59d4c0c0260e50de244279e317387ae501d1af0",
+          "sha256": "e5bf9dd20b8b7e28be10d51ba2b27dabd5785ea75b4f0ed0a46cd70b6111377f",
+          "sha1": "ca5358a636dbcee6a215ff31f94c3454673708cb",
+          "md5": "e46ed27a136fa3dbb4da870f0e2b35ef"
+        }
+      ]
+    }
+  ]
+}

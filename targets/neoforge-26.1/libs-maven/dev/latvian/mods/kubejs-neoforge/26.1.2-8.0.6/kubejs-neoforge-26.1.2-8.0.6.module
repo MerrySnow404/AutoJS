@@ -1,0 +1,154 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.mods",
+    "module": "kubejs-neoforge",
+    "version": "26.1.2-8.0.6",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.5.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "dev.latvian.mods",
+          "module": "rhino",
+          "version": {
+            "requires": "2101.2.8-build.91"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "name": "kubejs-neoforge-26.1.2-8.0.6.jar",
+          "url": "kubejs-neoforge-26.1.2-8.0.6.jar",
+          "size": 2214228,
+          "sha512": "21cb3a2f073e003bbd9b936f4c1c65cc9cc4a029acca2a34fa76e0e51e3681aa25f533ebbc46bec4527fe2afbd3e2064528a36b3dc371f930633e0912f858eaa",
+          "sha256": "36df262649e53c4b8256193198e7f5d225a6fec05f4b1e74e55c271e657ea5f0",
+          "sha1": "e469ecf3baca6a50e89a73089aeaf19afa5015b3",
+          "md5": "40f9a01c4fe486055c1178185f93dc8d"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 25,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "dev.latvian.mods",
+          "module": "better-advanced-tooltips",
+          "version": {
+            "strictly": "[2601.1.0-build.9,)",
+            "requires": "[2601.1.0-build.9,)",
+            "prefers": "2601.1.0-build.9"
+          }
+        },
+        {
+          "group": "dev.latvian.apps",
+          "module": "tiny-java-server",
+          "version": {
+            "strictly": "[1.0.0-build.45,)",
+            "requires": "[1.0.0-build.45,)",
+            "prefers": "1.0.0-build.45"
+          }
+        },
+        {
+          "group": "com.github.rtyley",
+          "module": "animated-gif-lib-for-java",
+          "version": {
+            "strictly": "[animated-gif-lib-1.7,)",
+            "requires": "[animated-gif-lib-1.7,)",
+            "prefers": "animated-gif-lib-1.7"
+          }
+        },
+        {
+          "group": "dev.latvian.mods",
+          "module": "rhino",
+          "version": {
+            "requires": "2101.2.8-build.91"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "name": "kubejs-neoforge-26.1.2-8.0.6.jar",
+          "url": "kubejs-neoforge-26.1.2-8.0.6.jar",
+          "size": 2214228,
+          "sha512": "21cb3a2f073e003bbd9b936f4c1c65cc9cc4a029acca2a34fa76e0e51e3681aa25f533ebbc46bec4527fe2afbd3e2064528a36b3dc371f930633e0912f858eaa",
+          "sha256": "36df262649e53c4b8256193198e7f5d225a6fec05f4b1e74e55c271e657ea5f0",
+          "sha1": "e469ecf3baca6a50e89a73089aeaf19afa5015b3",
+          "md5": "40f9a01c4fe486055c1178185f93dc8d"
+        }
+      ]
+    },
+    {
+      "name": "interfaceInjectionDataElements",
+      "attributes": {
+        "org.gradle.category": "interfaceinjection"
+      },
+      "files": [
+        {
+          "name": "kubejs-neoforge-26.1.2-8.0.6-interfaceinjection.json",
+          "url": "kubejs-neoforge-26.1.2-8.0.6-interfaceinjection.json",
+          "size": 2734,
+          "sha512": "a9545c8be679fd2a2188121c29d59f79b16fce8ace8cfbb69bbdea59f62ca42024865f58d263c527e77a39aa390b7276ba9bc0ccdb164dbaab8efb4de2a23c26",
+          "sha256": "d73e50c0a8b2f5fd30074e9ddd7bec9f7e5e145550ffa922431666c7971b33f8",
+          "sha1": "f6620a004437d4e36a9f5b1cabe6730f2d66ddcf",
+          "md5": "2eb175384d7a27bfb54af1f2b7452c98"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "kubejs-neoforge-26.1.2-8.0.6-sources.jar",
+          "url": "kubejs-neoforge-26.1.2-8.0.6-sources.jar",
+          "size": 913695,
+          "sha512": "1ca11550ac610cee5eadb55d4b267ea07e85805e4cacba5ef9e6367b9937d7736b717e73eeee0a43c0af38aac790028e40ac69ddac59d5dadfc4202cf168bde6",
+          "sha256": "e134ce5b20bfd416fc86582e6f9304907fd3019cca11e8754bb762605c6e1502",
+          "sha1": "2d034c48407de85adf3b1140b34a53121ccdbcf9",
+          "md5": "ecb01e9da01ffd7cab7be1d8f3bd7f1c"
+        }
+      ]
+    }
+  ]
+}

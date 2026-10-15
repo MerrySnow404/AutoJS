@@ -1,0 +1,80 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.mods",
+    "module": "rhino",
+    "version": "2101.2.8-build.91",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.11.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "rhino-2101.2.8-build.91.jar",
+          "url": "rhino-2101.2.8-build.91.jar",
+          "size": 980936,
+          "sha512": "e3d92f663bc07872a83b0a6474b30a75230e9f92a2844fd98da1842ec9a79712bcb7d8e76574cc11ae3aeceb47f2933c60ddd6cf41f3ad7027bd573623730945",
+          "sha256": "1d53d962aa4dac54bcbb4f998c1845980cf194318f1d6b1580ea6ac15cce5ef3",
+          "sha1": "56eab1d464ed0811c64040c64bd047df5cbc3aad",
+          "md5": "c8227681747c8fad25d1fc4e06542717"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "rhino-2101.2.8-build.91.jar",
+          "url": "rhino-2101.2.8-build.91.jar",
+          "size": 980936,
+          "sha512": "e3d92f663bc07872a83b0a6474b30a75230e9f92a2844fd98da1842ec9a79712bcb7d8e76574cc11ae3aeceb47f2933c60ddd6cf41f3ad7027bd573623730945",
+          "sha256": "1d53d962aa4dac54bcbb4f998c1845980cf194318f1d6b1580ea6ac15cce5ef3",
+          "sha1": "56eab1d464ed0811c64040c64bd047df5cbc3aad",
+          "md5": "c8227681747c8fad25d1fc4e06542717"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "rhino-2101.2.8-build.91-sources.jar",
+          "url": "rhino-2101.2.8-build.91-sources.jar",
+          "size": 654451,
+          "sha512": "11bff9708175ed3a6908dcb94c3f99581c269f2651f3fbf6bc75fa99094d67f22a08c60d06f1b89c3787a424987ea7fbae981f07ea45001a1a9aaa4d4ef9e95e",
+          "sha256": "bc5b779005b68ce8d00f775aae2b44db82d0c8636264a1d26955c486ee0fe8b8",
+          "sha1": "c5114b9fb3952e1ea0fea7aa62eae69dc3e53180",
+          "md5": "2692e7070a39c09e8376114127e4b030"
+        }
+      ]
+    }
+  ]
+}

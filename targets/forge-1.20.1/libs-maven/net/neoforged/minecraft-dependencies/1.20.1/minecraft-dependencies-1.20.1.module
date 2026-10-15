@@ -1,0 +1,3000 @@
+{
+    "formatVersion": "1.1",
+    "component": {
+        "group": "net.neoforged",
+        "module": "minecraft-dependencies",
+        "version": "1.20.1"
+    },
+    "variants": [
+        {
+            "name": "clientCompileDependencies",
+            "attributes": {
+                "org.gradle.usage": "java-api",
+                "org.gradle.jvm.version": 17,
+                "net.neoforged.distribution": "client"
+            },
+            "dependencies": [
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "ca.weblite",
+                    "module": "java-objc-bridge",
+                    "version": {
+                        "strictly": "1.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.github.oshi",
+                    "module": "oshi-core",
+                    "version": {
+                        "strictly": "6.2.2"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.code.gson",
+                    "module": "gson",
+                    "version": {
+                        "strictly": "2.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "failureaccess",
+                    "version": {
+                        "strictly": "1.0.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "guava",
+                    "version": {
+                        "strictly": "31.1-jre"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.ibm.icu",
+                    "module": "icu4j",
+                    "version": {
+                        "strictly": "71.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "authlib",
+                    "version": {
+                        "strictly": "4.0.43"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "blocklist",
+                    "version": {
+                        "strictly": "1.0.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "brigadier",
+                    "version": {
+                        "strictly": "1.1.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "datafixerupper",
+                    "version": {
+                        "strictly": "6.0.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "logging",
+                    "version": {
+                        "strictly": "1.1.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "patchy",
+                    "version": {
+                        "strictly": "2.2.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "text2speech",
+                    "version": {
+                        "strictly": "1.17.9"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-codec",
+                    "module": "commons-codec",
+                    "version": {
+                        "strictly": "1.15"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-io",
+                    "module": "commons-io",
+                    "version": {
+                        "strictly": "2.11.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-logging",
+                    "module": "commons-logging",
+                    "version": {
+                        "strictly": "1.2"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-buffer",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-codec",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-handler",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-resolver",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-classes-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-unix-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "it.unimi.dsi",
+                    "module": "fastutil",
+                    "version": {
+                        "strictly": "8.5.9"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna-platform",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.sf.jopt-simple",
+                    "module": "jopt-simple",
+                    "version": {
+                        "strictly": "5.0.4"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.commons",
+                    "module": "commons-compress",
+                    "version": {
+                        "strictly": "1.21"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.commons",
+                    "module": "commons-lang3",
+                    "version": {
+                        "strictly": "3.12.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.httpcomponents",
+                    "module": "httpclient",
+                    "version": {
+                        "strictly": "4.5.13"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.httpcomponents",
+                    "module": "httpcore",
+                    "version": {
+                        "strictly": "4.4.15"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-api",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-core",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-slf4j2-impl",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.joml",
+                    "module": "joml",
+                    "version": {
+                        "strictly": "1.10.5"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.slf4j",
+                    "module": "slf4j-api",
+                    "version": {
+                        "strictly": "2.0.1"
+                    }
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "net.neoforged",
+                    "name": "minecraft-dependencies",
+                    "version": "1.20.1"
+                }
+            ]
+        },
+        {
+            "name": "clientRuntimeDependencies",
+            "attributes": {
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.version": 17,
+                "net.neoforged.distribution": "client"
+            },
+            "dependencies": [
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.github.oshi",
+                    "module": "oshi-core",
+                    "version": {
+                        "strictly": "6.2.2"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.code.gson",
+                    "module": "gson",
+                    "version": {
+                        "strictly": "2.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "failureaccess",
+                    "version": {
+                        "strictly": "1.0.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "guava",
+                    "version": {
+                        "strictly": "31.1-jre"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.ibm.icu",
+                    "module": "icu4j",
+                    "version": {
+                        "strictly": "71.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "authlib",
+                    "version": {
+                        "strictly": "4.0.43"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "blocklist",
+                    "version": {
+                        "strictly": "1.0.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "brigadier",
+                    "version": {
+                        "strictly": "1.1.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "datafixerupper",
+                    "version": {
+                        "strictly": "6.0.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "logging",
+                    "version": {
+                        "strictly": "1.1.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "patchy",
+                    "version": {
+                        "strictly": "2.2.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "text2speech",
+                    "version": {
+                        "strictly": "1.17.9"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-codec",
+                    "module": "commons-codec",
+                    "version": {
+                        "strictly": "1.15"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-io",
+                    "module": "commons-io",
+                    "version": {
+                        "strictly": "2.11.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-logging",
+                    "module": "commons-logging",
+                    "version": {
+                        "strictly": "1.2"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-buffer",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-codec",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-handler",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-resolver",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-classes-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-unix-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "it.unimi.dsi",
+                    "module": "fastutil",
+                    "version": {
+                        "strictly": "8.5.9"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna-platform",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.sf.jopt-simple",
+                    "module": "jopt-simple",
+                    "version": {
+                        "strictly": "5.0.4"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.commons",
+                    "module": "commons-compress",
+                    "version": {
+                        "strictly": "1.21"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.commons",
+                    "module": "commons-lang3",
+                    "version": {
+                        "strictly": "3.12.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.httpcomponents",
+                    "module": "httpclient",
+                    "version": {
+                        "strictly": "4.5.13"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.httpcomponents",
+                    "module": "httpcore",
+                    "version": {
+                        "strictly": "4.4.15"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-api",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-core",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-slf4j2-impl",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.joml",
+                    "module": "joml",
+                    "version": {
+                        "strictly": "1.10.5"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.slf4j",
+                    "module": "slf4j-api",
+                    "version": {
+                        "strictly": "2.0.1"
+                    }
+                },
+                {
+                    "endorseStrictVersions": true,
+                    "group": "net.neoforged",
+                    "module": "minecraft-dependencies",
+                    "requestedCapabilities": [
+                        {
+                            "group": "net.neoforged",
+                            "name": "minecraft-dependencies-natives"
+                        }
+                    ],
+                    "version": {
+                        "strictly": "1.20.1"
+                    }
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "net.neoforged",
+                    "name": "minecraft-dependencies",
+                    "version": "1.20.1"
+                }
+            ]
+        },
+        {
+            "name": "serverCompileDependencies",
+            "attributes": {
+                "org.gradle.usage": "java-api",
+                "org.gradle.jvm.version": 17,
+                "net.neoforged.distribution": "server"
+            },
+            "dependencies": [
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-unix-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "linux-aarch_64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "netty-transport-native-epoll"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "linux-x86_64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "netty-transport-native-epoll"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-codec",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-classes-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-buffer",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-handler",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-resolver",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-io",
+                    "module": "commons-io",
+                    "version": {
+                        "strictly": "2.11.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "it.unimi.dsi",
+                    "module": "fastutil",
+                    "version": {
+                        "strictly": "8.5.9"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.slf4j",
+                    "module": "slf4j-api",
+                    "version": {
+                        "strictly": "2.0.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.commons",
+                    "module": "commons-lang3",
+                    "version": {
+                        "strictly": "3.12.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-core",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-slf4j2-impl",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-api",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.joml",
+                    "module": "joml",
+                    "version": {
+                        "strictly": "1.10.5"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.code.gson",
+                    "module": "gson",
+                    "version": {
+                        "strictly": "2.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "guava",
+                    "version": {
+                        "strictly": "31.1-jre"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "failureaccess",
+                    "version": {
+                        "strictly": "1.0.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.github.oshi",
+                    "module": "oshi-core",
+                    "version": {
+                        "strictly": "6.2.2"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "datafixerupper",
+                    "version": {
+                        "strictly": "6.0.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "brigadier",
+                    "version": {
+                        "strictly": "1.1.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "authlib",
+                    "version": {
+                        "strictly": "4.0.43"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "logging",
+                    "version": {
+                        "strictly": "1.1.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.sf.jopt-simple",
+                    "module": "jopt-simple",
+                    "version": {
+                        "strictly": "5.0.4"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna-platform",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "net.neoforged",
+                    "name": "minecraft-dependencies",
+                    "version": "1.20.1"
+                }
+            ]
+        },
+        {
+            "name": "serverRuntimeDependencies",
+            "attributes": {
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.version": 17,
+                "net.neoforged.distribution": "server"
+            },
+            "dependencies": [
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-unix-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-common",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "linux-aarch_64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "netty-transport-native-epoll"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "linux-x86_64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "netty-transport-native-epoll"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-codec",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-classes-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-buffer",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-handler",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-resolver",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "commons-io",
+                    "module": "commons-io",
+                    "version": {
+                        "strictly": "2.11.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "it.unimi.dsi",
+                    "module": "fastutil",
+                    "version": {
+                        "strictly": "8.5.9"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.slf4j",
+                    "module": "slf4j-api",
+                    "version": {
+                        "strictly": "2.0.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.commons",
+                    "module": "commons-lang3",
+                    "version": {
+                        "strictly": "3.12.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-core",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-slf4j2-impl",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.apache.logging.log4j",
+                    "module": "log4j-api",
+                    "version": {
+                        "strictly": "2.19.0"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.joml",
+                    "module": "joml",
+                    "version": {
+                        "strictly": "1.10.5"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.code.gson",
+                    "module": "gson",
+                    "version": {
+                        "strictly": "2.10"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "guava",
+                    "version": {
+                        "strictly": "31.1-jre"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.google.guava",
+                    "module": "failureaccess",
+                    "version": {
+                        "strictly": "1.0.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.github.oshi",
+                    "module": "oshi-core",
+                    "version": {
+                        "strictly": "6.2.2"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "datafixerupper",
+                    "version": {
+                        "strictly": "6.0.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "brigadier",
+                    "version": {
+                        "strictly": "1.1.8"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "authlib",
+                    "version": {
+                        "strictly": "4.0.43"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "com.mojang",
+                    "module": "logging",
+                    "version": {
+                        "strictly": "1.1.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.sf.jopt-simple",
+                    "module": "jopt-simple",
+                    "version": {
+                        "strictly": "5.0.4"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "net.java.dev.jna",
+                    "module": "jna-platform",
+                    "version": {
+                        "strictly": "5.12.1"
+                    }
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "net.neoforged",
+                    "name": "minecraft-dependencies",
+                    "version": "1.20.1"
+                }
+            ]
+        },
+        {
+            "name": "clientWindowsNatives",
+            "attributes": {
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.version": 17,
+                "net.neoforged.distribution": "client",
+                "net.neoforged.operatingsystem": "windows"
+            },
+            "dependencies": [
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-glfw"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-glfw"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-x86",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-glfw"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-jemalloc"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-jemalloc"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-x86",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-jemalloc"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-openal"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-openal"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-x86",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-openal"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-opengl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-opengl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-x86",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-opengl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-stb"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-stb"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-x86",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-stb"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-tinyfd"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-tinyfd"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-x86",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-tinyfd"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-windows-x86",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl"
+                        }
+                    }
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "net.neoforged",
+                    "name": "minecraft-dependencies-natives",
+                    "version": "1.20.1"
+                }
+            ]
+        },
+        {
+            "name": "clientOsxNatives",
+            "attributes": {
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.version": 17,
+                "net.neoforged.distribution": "client",
+                "net.neoforged.operatingsystem": "osx"
+            },
+            "dependencies": [
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "ca.weblite",
+                    "module": "java-objc-bridge",
+                    "version": {
+                        "strictly": "1.1"
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-glfw"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-glfw"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-jemalloc"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-jemalloc"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-openal"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-openal"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-opengl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-opengl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-stb"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-stb"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-tinyfd"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-tinyfd"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-macos-arm64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl"
+                        }
+                    }
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "net.neoforged",
+                    "name": "minecraft-dependencies-natives",
+                    "version": "1.20.1"
+                }
+            ]
+        },
+        {
+            "name": "clientLinuxNatives",
+            "attributes": {
+                "org.gradle.usage": "java-runtime",
+                "org.gradle.jvm.version": 17,
+                "net.neoforged.distribution": "client",
+                "net.neoforged.operatingsystem": "linux"
+            },
+            "dependencies": [
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "linux-aarch_64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "netty-transport-native-epoll"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "io.netty",
+                    "module": "netty-transport-native-epoll",
+                    "version": {
+                        "strictly": "4.1.82.Final"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "linux-x86_64",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "netty-transport-native-epoll"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-glfw",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-linux",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-glfw"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-jemalloc",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-linux",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-jemalloc"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-openal",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-linux",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-openal"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-opengl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-linux",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-opengl"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-stb",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-linux",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-stb"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl-tinyfd",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-linux",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl-tinyfd"
+                        }
+                    }
+                },
+                {
+                    "excludes": [
+                        {
+                            "group": "*",
+                            "module": "*"
+                        }
+                    ],
+                    "group": "org.lwjgl",
+                    "module": "lwjgl",
+                    "version": {
+                        "strictly": "3.3.1"
+                    },
+                    "thirdPartyCompatibility": {
+                        "artifactSelector": {
+                            "classifier": "natives-linux",
+                            "extension": "jar",
+                            "type": "jar",
+                            "name": "lwjgl"
+                        }
+                    }
+                }
+            ],
+            "capabilities": [
+                {
+                    "group": "net.neoforged",
+                    "name": "minecraft-dependencies-natives",
+                    "version": "1.20.1"
+                }
+            ]
+        }
+    ]
+}

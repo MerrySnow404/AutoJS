@@ -9,22 +9,26 @@
 | 包名 / Gradle group | `cc.sighs.autojs` |
 | 作者 | MerrySnow |
 | 协议 | GPL-3.0-or-later |
-| 当前 target | `neoforge-1.21.1` |
-| Minecraft / NeoForge | 1.21.1 / 21.1.234 |
-| Gradle JVM | JDK 21 |
-| 依赖 | [Rhino](https://kubejs.com) `2101.2.7-build.81`（必需，脚本内核）+ [KubeJS](https://kubejs.com) `2101.7.2-build.379`（可选，装了就用 KubeJS 模式） |
+| 当前 target | 六个（见下表） |
+| Gradle JVM | 按 target：JDK 17 / 21 / 25 |
+| 依赖 | [Rhino](https://kubejs.com)（必需，脚本内核）+ [KubeJS](https://kubejs.com)（可选，装了就用 KubeJS 模式）；具体版本逐 target 见各 `gradle.properties` |
 
 ## IDEA
 
-直接打开 `targets/neoforge-1.21.1/` 目录。IDEA 会导入该 target，并把 `../../common` 作为 composite build 的独立可编辑模块一起导入，只下载该 target 的加载器和 Minecraft 依赖。
+直接打开 `targets/<name>/` 目录（下表任选一个）。IDEA 会导入该 target，并把 `../../common` 作为 composite build 的独立可编辑模块一起导入，只下载该 target 的加载器和 Minecraft 依赖。
 
 ## Target
 
-| Target | Gradle JVM | 构建命令 |
-| --- | --- | --- |
-| `neoforge-1.21.1` | JDK 21 | `targets\neoforge-1.21.1\.\gradlew.bat clean build` |
+| Target | Minecraft / loader | Gradle JVM | 构建命令（在该 target 目录内） |
+| --- | --- | --- | --- |
+| `neoforge-1.21.1` | 1.21.1 / NeoForge 21.1.234 | JDK 21 | `.\gradlew.bat clean build` |
+| `neoforge-26.1` | 26.1 / NeoForge 26.1.2.84 | JDK 25 | 同上 |
+| `forge-1.20.1` | 1.20.1 / Forge 47.3.0 | JDK 17 | 同上，本机需加 `-Pautojs.localToolchain` |
+| `forge-1.19.2` | 1.19.2 / Forge 43.5.0 | JDK 17 | 同上，本机需加 `-Pautojs.localToolchain` |
+| `forge-1.18.2` | 1.18.2 / Forge 40.2.21 | JDK 17 | 同上，本机需加 `-Pautojs.localToolchain` |
+| `fabric-1.20.1` | 1.20.1 / Fabric 0.16.14 | JDK 17 | 同上，本机需加 `-Pautojs.localToolchain` |
 
-根项目默认只同步 `common`，也可以用 `-Ptarget` 聚合构建：
+六个 target 都登记在根 `build.gradle` 的 `targetBuilds` 里，可以用 `-Ptarget` 聚合构建（带 `libs-maven/` 的那些在本机仍要进各自目录加 `-Pautojs.localToolchain`，因为本机 Gradle 读不了 `maven.latvian.dev`）：
 
 ```powershell
 .\gradlew.bat '-Ptarget=neoforge-1.21.1' build
@@ -32,8 +36,8 @@
 
 ## 结构
 
-- `common/`: 所有没有确证版本差异的共享代码与共享资源，可以引用 Minecraft、NeoForge 与 KubeJS 类型。
-- `targets/*`: 只放 loader 和版本专属的 metadata 与资源（`META-INF/neoforge.mods.toml`、`kubejs.plugins.txt`）；Java 代码不分家，全部在 `common`。
+- `common/`: 所有没有确证版本差异的共享代码与共享资源。共享的是协议与接缝：MCP 协议与 HTTP 传输、工具注册表、side 抽象（`side/`）与脚本引擎 SPI（`engine/` 的 `ScriptEngine`、`EngineSideBackend`），以及把工作投到该 side 游戏线程并施加超时的那部分。
+- `targets/*`: loader 和版本专属的 metadata 与资源（`META-INF/neoforge.mods.toml`、`kubejs.plugins.txt`），以及**经源码确证有版本/加载器差异的 Java 实现**。`targets/neoforge-1.21.1/src/main/java/` 现在放脚本引擎轴（KubeJS 引擎、拆沙箱、Rhino 内核）与加载器轴（mod 入口、`AutoJSBackends` 门面、两个 side 后端）的全部实现；`common` 里因此没有任何 `dev.latvian.mods.*` 的 import。
 - `gradle/target-conventions/publish.gradle`: 所有 target 共用的发布约定。
 
 每个 target 通过 source-set sharing 把 `../../common/src/main/java`（由 `prepareCommonSources` 同步到生成目录）直接编译进自己的源码集，因此 `common` 既能在任意 target 内被独立编辑，也能单独构建：
@@ -42,7 +46,7 @@
 .\gradlew.bat -p common build
 ```
 
-经源码确证在某个 target 上存在版本差异的 common 文件，在该 target 的 `prepareCommonSources` 中 `exclude` 对应路径，并由该 target 提供自己的实现。
+经源码确证在某个 target 上存在版本差异的 common 文件，在该 target 的 `prepareCommonSources` 中 `exclude` 对应路径，并由该 target 提供自己的实现。`targets/neoforge-1.21.1` 的 exclude 块就是这条规则的登记表：引擎轴的每一条对应 `cc/sighs/autojs/neoforge/` 下一个由该 target 自己实现的文件，加载器轴同理。KubeJS 与 Rhino 都属“世代断裂”的 API（KubeJS 2101 才有 `KubeJSContextFactory` 与插件接口，Rhino 2101 才有 `ContextFactory`），所以引擎实现不能留在 `common` 让别的版本照编。
 
 ## MCP 端点
 
@@ -72,7 +76,7 @@ AutoJS 自带 Rhino 脚本内核（对 `dev.latvian.mods:rhino` 是硬依赖）�
 | `reload_scripts` | KubeJS 的 reload 路径（客户端还会重收 tooltip 缓存） | 重建该 side 的 Rhino 作用域 |
 | 沙箱 | 由 `unrestricted` 决定是否拆 | 天生没有沙箱：裸 Rhino context 不过滤任何类 |
 
-Rhino 模式只是"能跑脚本"，不是 KubeJS 的等价替代：事件系统与预注册绑定层刻意没有复刻。接线都在 `common/src/main/java/cc/sighs/autojs/neoforge/`：`AutoJSBackends` 是门面且不 import 任何 KubeJS 类型（所以没装 KubeJS 时 mod 构造期不会 `NoClassDefFoundError`），KubeJS 分支收在 `kubejs/KubeJSIntegration` 里。
+Rhino 模式只是"能跑脚本"，不是 KubeJS 的等价替代：事件系统与预注册绑定层刻意没有复刻。两种模式在代码上是同一个接缝的两个实现：`common/src/main/java/cc/sighs/autojs/engine/ScriptEngine.java` 定义引擎该做什么（能不能求值、沙箱开没开、怎么求值、怎么重载），`targets/neoforge-1.21.1/src/main/java/cc/sighs/autojs/neoforge/kubejs/KubeJSEngine.java` 与 `.../rhino/RhinoEngine.java` 是它的两个实现；`AutoJSBackends` 是按 `ModList` 选实现的门面，且不 import 任何 KubeJS 类型（所以没装 KubeJS 时 mod 构造期不会 `NoClassDefFoundError`）。
 
 一个例外要说明：启动脚本（`startup_scripts`）没有自己的 side，`AutoJS.side()` 一律报 `server`（KubeJS 模式下以前报 `startup`）；日志出口仍然是 KubeJS 的 startup 控制台，不受影响。
 
@@ -195,7 +199,7 @@ AutoJS.area(AutoJS.player(), 48, { top: 20, entities: 10, volume: false })
 
 ## 依赖
 
-依赖分两层写：`common` 需要 Rhino（`implementation`，脚本内核）与 KubeJS（`implementation`，共享代码要编译它引用的类型）；target 把 KubeJS 降级成软依赖——`compileOnly` + `runtimeOnly`——因为最终 jar 必须在没有 KubeJS 的实例里正常加载。target 的 `dependencies` 如下：
+依赖分两层写：`common` 用 `implementation` 引 Rhino 与 KubeJS，只是为了让它的独立编译用上跟 target 完全一样的类路径（这样“这个文件有没有确证版本差异”可以直接用一次编译回答）——现在 `common` 的源码已经不再 import 其中任何一个；target 把 KubeJS 降级成软依赖——`compileOnly` + `runtimeOnly`——因为最终 jar 必须在没有 KubeJS 的实例里正常加载。target 的 `dependencies` 如下：
 
 ```groovy
 repositories {

@@ -1,0 +1,138 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.mods",
+    "module": "kubejs-forge",
+    "version": "1902.6.2-build.74",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "dev.architectury",
+          "module": "architectury-forge",
+          "version": {
+            "requires": "6.5.82"
+          }
+        },
+        {
+          "group": "dev.latvian.mods",
+          "module": "rhino-forge",
+          "version": {
+            "requires": "1902.2.2-build.280"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "name": "kubejs-forge-1902.6.2-build.74.jar",
+          "url": "kubejs-forge-1902.6.2-build.74.jar",
+          "size": 1562660,
+          "sha512": "5fe9391f9ac601e6380a072c69f8a17a039452fdea8098e523f4a0bc5719355e7f416787e9b3dce5609d3c60720ee1ab1241f09a46340fc10e4abb2253923bac",
+          "sha256": "4da67843dae19a1dffa8e20b6a270fd8732e92723c24158030e31b87f4e9dab7",
+          "sha1": "e588293ccb67f9244df2aacc761be7466180ed69",
+          "md5": "418c92af278a65ecdaae09efb319b8cc"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "io.github.llamalad7",
+          "module": "mixinextras-common",
+          "version": {
+            "requires": "0.2.0-rc.2"
+          }
+        },
+        {
+          "group": "io.github.llamalad7",
+          "module": "mixinextras-forge",
+          "version": {
+            "requires": "0.2.0-rc.2"
+          }
+        },
+        {
+          "group": "dev.architectury",
+          "module": "architectury-forge",
+          "version": {
+            "requires": "6.5.82"
+          }
+        },
+        {
+          "group": "dev.latvian.mods",
+          "module": "rhino-forge",
+          "version": {
+            "requires": "1902.2.2-build.280"
+          },
+          "excludes": [
+            {
+              "group": "*",
+              "module": "*"
+            }
+          ]
+        }
+      ],
+      "files": [
+        {
+          "name": "kubejs-forge-1902.6.2-build.74.jar",
+          "url": "kubejs-forge-1902.6.2-build.74.jar",
+          "size": 1562660,
+          "sha512": "5fe9391f9ac601e6380a072c69f8a17a039452fdea8098e523f4a0bc5719355e7f416787e9b3dce5609d3c60720ee1ab1241f09a46340fc10e4abb2253923bac",
+          "sha256": "4da67843dae19a1dffa8e20b6a270fd8732e92723c24158030e31b87f4e9dab7",
+          "sha1": "e588293ccb67f9244df2aacc761be7466180ed69",
+          "md5": "418c92af278a65ecdaae09efb319b8cc"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "kubejs-forge-1902.6.2-build.74-sources.jar",
+          "url": "kubejs-forge-1902.6.2-build.74-sources.jar",
+          "size": 655811,
+          "sha512": "456a8f16f9d71b72e5c8805741a50a7a2e2223bd8e58308a0a12229a41851db3a9f2b283790560d4244382d32d5b0a4cb88e1758c1d6604461f6adf78ae1a70b",
+          "sha256": "808a51ed967f59e5e0075b29e631e0ffc68ee3abb3ab8cb9e8cf69b79fde5797",
+          "sha1": "2d099cb86f863c1a5de9059bb26f12862d6eec85",
+          "md5": "5600116142923662244424906740f0cb"
+        }
+      ]
+    }
+  ]
+}

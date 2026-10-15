@@ -1,0 +1,80 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.architectury",
+    "module": "architectury-forge",
+    "version": "6.5.82",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "7.4.2"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 16,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "architectury-forge-6.5.82.jar",
+          "url": "architectury-forge-6.5.82.jar",
+          "size": 563671,
+          "sha512": "91e3c168ed4915415fd007b1ef27ec12940b36cd65bce19e0bef6b47538e67512d21c20aca83fcebb02999e690793893e51dff2111d17689dac0da6bd384628a",
+          "sha256": "ca96ff5ae58ce87822605e9911604f9601cf8365619ce6bc651e08c42aecdbfe",
+          "sha1": "1db75e38907cd0b720bc3e64a9de72e6f1f2a66d",
+          "md5": "32159935b40af6ea7e7a985e5773066f"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 16,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "architectury-forge-6.5.82.jar",
+          "url": "architectury-forge-6.5.82.jar",
+          "size": 563671,
+          "sha512": "91e3c168ed4915415fd007b1ef27ec12940b36cd65bce19e0bef6b47538e67512d21c20aca83fcebb02999e690793893e51dff2111d17689dac0da6bd384628a",
+          "sha256": "ca96ff5ae58ce87822605e9911604f9601cf8365619ce6bc651e08c42aecdbfe",
+          "sha1": "1db75e38907cd0b720bc3e64a9de72e6f1f2a66d",
+          "md5": "32159935b40af6ea7e7a985e5773066f"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "architectury-forge-6.5.82-sources.jar",
+          "url": "architectury-forge-6.5.82-sources.jar",
+          "size": 417084,
+          "sha512": "8c92927b4a657f2a3a624a4951f4c03d371c5e1182179c2aa680df5a436606c68b6e6fbe480728aed8e22f504f4ef4d118831301738fa592db334020a62f4ad8",
+          "sha256": "a976525c01354b630b2b9e002a44b8429403c0e047061cf2539a7f405278674a",
+          "sha1": "8751f977aa0f92c12cc61eba19f16725dbfce417",
+          "md5": "2f8d7d5dc0497db927bca9e52bee6b31"
+        }
+      ]
+    }
+  ]
+}

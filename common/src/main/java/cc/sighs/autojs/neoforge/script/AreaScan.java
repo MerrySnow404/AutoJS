@@ -1,20 +1,18 @@
 package cc.sighs.autojs.neoforge.script;
 
+import cc.sighs.autojs.mc.McApi;
+import cc.sighs.autojs.mc.VanillaApi;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -123,7 +121,7 @@ public final class AreaScan {
                 structures, withStructures);
 
         var json = new JsonObject();
-        json.addProperty("dimension", level.dimension().location().toString());
+        json.addProperty("dimension", McApi.vanilla().keyId(level.dimension()));
         json.add("center", arrayOf(round(point.x), round(point.y), round(point.z)));
         json.add("box", box(minX, minY, minZ, maxX, maxY, maxZ));
 
@@ -164,7 +162,7 @@ public final class AreaScan {
             json.add("structures", array);
         }
 
-        if (withStructures && level.registryAccess().registry(Registries.STRUCTURE).isEmpty()) {
+        if (withStructures && !McApi.vanilla().hasStructureRegistry(level)) {
             notes.add("structures are not listed: this side has no structure registry, which is normal on a client");
         }
         if (columnStride > 1) {
@@ -207,7 +205,7 @@ public final class AreaScan {
                 heights.accept(height);
                 var surfacePos = new BlockPos(x, height, z);
 
-                add(surface, registryId(BuiltInRegistries.BLOCK, level.getBlockState(surfacePos).getBlock()));
+                add(surface, registryId(McApi.vanilla().blocks(), level.getBlockState(surfacePos).getBlock()));
                 add(biomes, biomeId(level.getBiome(surfacePos)));
             }
         }
@@ -224,7 +222,7 @@ public final class AreaScan {
                         continue;
                     }
                     samples++;
-                    add(counted, registryId(BuiltInRegistries.BLOCK, level.getBlockState(new BlockPos(x, y, z)).getBlock()));
+                    add(counted, registryId(McApi.vanilla().blocks(), level.getBlockState(new BlockPos(x, y, z)).getBlock()));
                 }
             }
         }
@@ -236,10 +234,6 @@ public final class AreaScan {
     private static void scanChunks(Level level, List<LevelChunk> chunks, int minX, int minY, int minZ, int maxX,
                                    int maxY, int maxZ, Map<String, Integer> blockEntities, JsonArray blockEntityList,
                                    int top, Set<String> structures, boolean withStructures) {
-        // Structures are a datapack registry, so they are read from the level rather than BuiltInRegistries, and a
-        // client may not have that registry synced at all: then there is simply nothing to report.
-        var structureRegistry = level.registryAccess().registry(Registries.STRUCTURE).orElse(null);
-
         for (var chunk : chunks) {
             for (var entry : chunk.getBlockEntities().entrySet()) {
                 var pos = entry.getKey();
@@ -248,7 +242,7 @@ public final class AreaScan {
                 }
 
                 BlockEntity blockEntity = entry.getValue();
-                var id = registryId(BuiltInRegistries.BLOCK_ENTITY_TYPE, blockEntity.getType());
+                var id = registryId(McApi.vanilla().blockEntityTypes(), blockEntity.getType());
                 add(blockEntities, id);
                 if (blockEntityList.size() < top) {
                     var json = new JsonObject();
@@ -258,12 +252,10 @@ public final class AreaScan {
                 }
             }
 
-            if (!withStructures || structureRegistry == null) {
+            if (!withStructures) {
                 continue;
             }
-            for (Structure structure : chunk.getAllStarts().keySet()) {
-                structures.add(registryId(structureRegistry, structure));
-            }
+            structures.addAll(McApi.vanilla().structureIds(level, chunk));
         }
     }
 
@@ -277,7 +269,7 @@ public final class AreaScan {
 
         var byType = new HashMap<String, Integer>();
         for (var entity : entities) {
-            add(byType, registryId(BuiltInRegistries.ENTITY_TYPE, entity.getType()));
+            add(byType, registryId(McApi.vanilla().entityTypes(), entity.getType()));
         }
 
         var summary = new JsonObject();
@@ -292,7 +284,7 @@ public final class AreaScan {
                     break;
                 }
                 var entry = new JsonObject();
-                entry.addProperty("type", registryId(BuiltInRegistries.ENTITY_TYPE, entity.getType()));
+                entry.addProperty("type", registryId(McApi.vanilla().entityTypes(), entity.getType()));
                 entry.addProperty("name", entity.getName().getString());
                 entry.add("pos", arrayOf(round(entity.getX()), round(entity.getY()), round(entity.getZ())));
                 entry.addProperty("alive", entity.isAlive());
@@ -321,7 +313,7 @@ public final class AreaScan {
     private static Set<Long> loadedKeys(List<LevelChunk> chunks) {
         var keys = new HashSet<Long>();
         for (var chunk : chunks) {
-            keys.add(key(chunk.getPos().x, chunk.getPos().z));
+            keys.add(key(McApi.vanilla().chunkX(chunk.getPos()), McApi.vanilla().chunkZ(chunk.getPos())));
         }
         return keys;
     }
@@ -362,23 +354,29 @@ public final class AreaScan {
         counts.merge(key, 1, Integer::sum);
     }
 
-    private static <T> String registryId(Registry<T> registry, T value) {
-        var key = registry.getKey(value);
-        return key == null ? "unregistered" : key.toString();
+    private static <T> String registryId(VanillaApi.Lookup<T> registry, T value) {
+        var key = registry.idOf(value);
+        return key == null ? "unregistered" : key;
     }
 
     private static String biomeId(Holder<net.minecraft.world.level.biome.Biome> biome) {
-        return biome.unwrapKey().map(key -> key.location().toString()).orElse("unknown");
+        return biome.unwrapKey().map(McApi.vanilla()::keyId).orElse("unknown");
     }
 
     private static Point resolve(Object centre) {
-        return switch (centre) {
-            case null -> null;
-            case Entity entity -> new Point(entity.getX(), entity.getY(), entity.getZ());
-            case BlockPos pos -> new Point(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
-            case JsonElement json -> fromJson(json);
-            default -> null;
-        };
+        if (centre == null) {
+            return null;
+        }
+        if (centre instanceof Entity entity) {
+            return new Point(entity.getX(), entity.getY(), entity.getZ());
+        }
+        if (centre instanceof BlockPos pos) {
+            return new Point(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D);
+        }
+        if (centre instanceof JsonElement json) {
+            return fromJson(json);
+        }
+        return null;
     }
 
     private static Point fromJson(JsonElement json) {

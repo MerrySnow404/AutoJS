@@ -43,6 +43,71 @@ tasks.register('prepareCommonSources', Sync) {
         // implementation, for example
         //     exclude 'com/example/network/ChunkPacket.java'
         // Everything not listed here stays shared with every other target.
+        //
+        // Script-engine axis. common/ only defines the engine SPI
+        // (cc.sighs.autojs.engine.ScriptEngine, EngineSideBackend); every implementation of it
+        // that reaches a KubeJS or Rhino type is target-owned, because both changed by leaps
+        // between the KubeJS generations AutoJS supports: KubeJS 2101 has KubeJSContext,
+        // KubeJSContextFactory and the plugin interface that 1802/1902/2001 do not, and Rhino
+        // only grows ContextFactory, type.TypeInfo and util.wrap at 2101. The paths below are
+        // this target's replacements; each stays as the record of a confirmed difference and
+        // keeps a stray copy out of the generated source set if one ever reappears in common.
+        //
+        // 26.1 sits on the 2101 generation, so this list is the 1.21.1 target's, unchanged: the
+        // KubeJS 8 / Rhino 2101 APIs these files are written against are the same ones here (the
+        // one drift is in UnrestrictedClassFilter, see Arm's length from the sandbox below).
+        exclude 'cc/sighs/autojs/neoforge/AbstractKubeJSSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSConsole.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSEvaluator.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSScriptManagers.java'
+        exclude 'cc/sighs/autojs/neoforge/KubeJSSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSKubeJSPlugin.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSUnrestricted.java'
+        exclude 'cc/sighs/autojs/neoforge/backend/RhinoSideBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/client/ClientEvalBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/eval/ScriptValue.java'
+        exclude 'cc/sighs/autojs/neoforge/kubejs/KubeJSIntegration.java'
+        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoBindings.java'
+        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoRuntime.java'
+        exclude 'cc/sighs/autojs/neoforge/server/ServerEvalBackend.java'
+        exclude 'cc/sighs/autojs/neoforge/tools/KubeJSLogTool.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedAccess.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedContextFactory.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSContext.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSServerContext.java'
+        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedPathWrappers.java'
+
+        // Loader axis. Same rule, one step further out: the mod constructor, its client half and
+        // the engine-selection facade are the only files whose NeoForge FML usage is their whole
+        // reason to exist. The constructor is named for this version rather than for 1.21.1, because
+        // a class name is part of a target's own surface and "121" would be a lie here.
+        exclude 'cc/sighs/autojs/neoforge/AutoJSBackends.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForge261.java'
+        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForgeClient.java'
+
+        // Minecraft API axis. The shared scripts no longer name a call that moved between 1.18.2
+        // and 1.21.1: they ask cc.sighs.autojs.mc.McApi for the three interfaces a target
+        // implements, and this target's implementations are the three files below. AutoJSInput
+        // moves with them because the class it extends, net.minecraft.client.player.Input, is
+        // itself what changed: its tick takes one argument at 1.18.2 and two from 1.19, so only
+        // the target that has this Input can write the subclass the client bridge drives.
+        //
+        // As above, these lines are the record of a confirmed difference: the implementations
+        // live in this target, and listing them keeps a stray shared copy out of the generated
+        // source set if one ever reappears in common.
+        exclude 'cc/sighs/autojs/neoforge/client/AutoJSInput.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSClient.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSLoader.java'
+        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSVanilla.java'
+
+        // 26.1 removes net.minecraft.client.player.Input outright — ClientInput is the class the
+        // local player drives now, and the key masks it reads are the world/entity/player/Input
+        // record — and it folds ReceivingLevelScreen into LevelLoadingScreen. Both are named in
+        // the shared client seam: ClientApi hands out the driven input, and ClientScriptBridge is
+        // the one class that writes it and that reads the screen list. Nothing below the client
+        // facade names either, so these two paths and AutoJSInput above are the whole of it.
+        exclude 'cc/sighs/autojs/mc/ClientApi.java'
+        exclude 'cc/sighs/autojs/neoforge/client/ClientScriptBridge.java'
     }
     into "$buildDir/generated/common-main"
 }
@@ -74,12 +139,78 @@ neoForge {
     }
 }
 
+// maven.neoforged.net is a default artifact repository of the ModDevGradle plugins
+// and is not reachable from every build machine: the connection times out, which
+// Gradle treats as a fatal repository error rather than as "not found", so a
+// resolution that touches it fails instead of falling through to the next
+// repository. -Pautojs.localToolchain is for a machine in that position.
+//
+// On this target the host Gradle cannot read at all is maven.latvian.dev: it
+// answers curl, but Gradle's own HTTP client is reset by it, so the KubeJS 26.1
+// artifacts and the two libraries KubeJS needs at runtime are kept here instead,
+// under libs-maven, ahead of the repository they stand in for. That directory's
+// README says what each file is. Use the flag together with --offline, because the
+// pipeline's own tools come from the same unreachable hosts and Gradle keys cached
+// metadata to the repository it came from, so those repositories have to stay
+// registered for that cache to be readable at all.
+//
+// Without the flag nothing here takes effect: a machine with working access to
+// maven.latvian.dev resolves every real artifact and libs-maven is never
+// consulted.
+def localToolchain = providers.gradleProperty('autojs.localToolchain')
+
 repositories {
     mavenCentral()
     mavenLocal()
+
+    if (localToolchain.isPresent()) {
+        maven {
+            name = "LocalToolchain"
+            url = uri('libs-maven')
+            content {
+                includeGroup "dev.latvian.mods"
+                includeGroup "dev.latvian.apps"
+            }
+        }
+    }
+
+    // Rhino and KubeJS on the 2101 generation. Naming the host from a build script is what keeps
+    // its Gradle metadata cache readable in --offline mode; libs-maven above is what actually
+    // answers for the artifacts on a machine that cannot read it.
+    maven {
+        name = 'Latvian'
+        url = 'https://maven.latvian.dev/releases'
+        content {
+            includeGroup "dev.latvian.mods"
+            includeGroup "dev.latvian.apps"
+        }
+    }
+    // JitPack, which is what publishes KubeJS's animated-GIF library — the one runtime dependency
+    // this target does not keep a copy of, because the host is reachable.
+    maven {
+        name = 'JitPack'
+        url = 'https://jitpack.io'
+        content {
+            includeGroup "com.github.rtyley"
+        }
+    }
 }
 
 dependencies {
+    // Rhino, the script engine AutoJS embeds so that KubeJS can be optional. Always on the classpath: it is
+    // what the standalone kernel runs on, and neoforge.mods.toml declares it a required mod dependency.
+    //
+    // One declaration covers both halves here, as it does on 1802: this artifact is the library *and* the mod.
+    // Its jar carries META-INF/neoforge.mods.toml with modId "rhino" (and the older META-INF/mods.toml beside
+    // it), and KubeJS 26.1 requires exactly this version, so the two modes never load two Rhinos.
+    implementation "dev.latvian.mods:rhino:${rhino_version}"
+
+    // KubeJS APIs used by AutoJS. compileOnly because KubeJS is a soft dependency: the mod has to load and run
+    // without it. runtimeOnly puts it back on the dev runtime classpath, so runServer still exercises the KubeJS
+    // mode, which is the mode that has to keep behaving exactly as before.
+    compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+    runtimeOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+
     testImplementation platform('org.junit:junit-bom:5.10.2')
     testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.4'

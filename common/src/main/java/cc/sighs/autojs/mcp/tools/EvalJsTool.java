@@ -36,17 +36,19 @@ public final class EvalJsTool implements McpTool {
                 Evaluate JavaScript inside the running game through KubeJS and return the value of the last expression.
 
                 The snippet runs on the chosen side's main thread with the same globals as a KubeJS script file of that \
-                side, so it can read and change live game state and call the Java APIs KubeJS exposes (Java.loadClass, \
-                Item, Block, Text, NBT, Registry, player and level objects, ...). Wrap the value in JSON.stringify(...) \
-                when you want structured data back.
+                side, so it can read and change live game state and call the Java APIs KubeJS exposes (Item, Block, Text, \
+                NBT, Registry, player and level objects, ...). Wrap the value in JSON.stringify(...) when you want \
+                structured data back. The class-loading helper is the one this KubeJS generation has: `Java.loadClass(...)` \
+                on most of them, the older lowercase `java('...')` on the 1.18.2 line, which has no `Java` global at all.
 
                 Limits, and how they actually fail:
 
                 - Event handlers, recipes, tags and commands cannot be registered from here. KubeJS refuses that outside \
                 its script loading phase and swallows the refusal instead of raising it, so such a snippet still reports \
                 ok:true while doing nothing. The refusal is returned in 'diagnostics' whenever it happens during this \
-                call, so always read that field; anything logged earlier is in logs/kubejs/<side>.log. Expect no-ops and \
-                verify side effects by reading state back.
+                call, so always read that field; anything logged earlier is in the side's KubeJS console file, \
+                logs/kubejs/<side>.log (the oldest KubeJS line writes .txt there instead). Expect no-ops and verify side \
+                effects by reading state back.
                 - Items, blocks and other registry objects cannot be registered at runtime at all.
                 - Globals you define are discarded on the next /reload or resource reload, because KubeJS builds a fresh \
                 context each time.

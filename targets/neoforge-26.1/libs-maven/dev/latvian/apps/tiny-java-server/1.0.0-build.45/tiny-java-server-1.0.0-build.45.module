@@ -1,0 +1,80 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "dev.latvian.apps",
+    "module": "tiny-java-server",
+    "version": "1.0.0-build.45",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.2.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "files": [
+        {
+          "name": "tiny-java-server-1.0.0-build.45.jar",
+          "url": "tiny-java-server-1.0.0-build.45.jar",
+          "size": 132840,
+          "sha512": "c806f10eafa040922a6e82e7e6e630e125c0fc2e9bb3cc7c059a9734783aa4235f704776690651d7190de18d0231348e4479201bbc0cbf06c689f9d1c9e8f93b",
+          "sha256": "afae8272cf3569d470ee01bead0d2e71f3dbbe90cd777ffdfc1e2a4844247b8a",
+          "sha1": "1463e7b629aa0a3bdf4ac7701e5ae554099fc0c3",
+          "md5": "498ad186934f73d30bca59781feda8ad"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "tiny-java-server-1.0.0-build.45.jar",
+          "url": "tiny-java-server-1.0.0-build.45.jar",
+          "size": 132840,
+          "sha512": "c806f10eafa040922a6e82e7e6e630e125c0fc2e9bb3cc7c059a9734783aa4235f704776690651d7190de18d0231348e4479201bbc0cbf06c689f9d1c9e8f93b",
+          "sha256": "afae8272cf3569d470ee01bead0d2e71f3dbbe90cd777ffdfc1e2a4844247b8a",
+          "sha1": "1463e7b629aa0a3bdf4ac7701e5ae554099fc0c3",
+          "md5": "498ad186934f73d30bca59781feda8ad"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "tiny-java-server-1.0.0-build.45-sources.jar",
+          "url": "tiny-java-server-1.0.0-build.45-sources.jar",
+          "size": 55919,
+          "sha512": "90f0acbf8455dade9c162d8d81946f681411d2e7716f438afd5a02b338d3abe72067835bf4eb882ce56cd703d3f06a55677261c635e96861f4de03b680d47df6",
+          "sha256": "e90c76ae5d90615d97cd819f032a921cb41fabaaf7281572553465d5dfc36fcf",
+          "sha1": "95ce5dc6246c5f30dade1fe88c389a6f9040d1c6",
+          "md5": "7611070e6339a7eb3b836855229335d1"
+        }
+      ]
+    }
+  ]
+}

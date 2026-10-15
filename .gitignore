@@ -126,6 +126,14 @@ logs/
 /.codex_tmp/
 node_modules/
 
+# Scratch used while driving the game over MCP: session notes, extracted jars, throwaway servers and
+# their logs. Nothing in here is a source of truth for the project.
+.autojs-scratch/
+
+# Python bytecode from the helper scripts that live in those scratch directories.
+__pycache__/
+*.pyc
+
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 
