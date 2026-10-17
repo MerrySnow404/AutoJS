@@ -1,6 +1,6 @@
 ---
 name: autojs
-description: Test Minecraft mods on a running game through the AutoJS MCP endpoint. Use it to evaluate JavaScript on the client or server side of a live NeoForge 1.21.1 game (KubeJS when it is installed, AutoJS's own Rhino kernel when it is not), inspect and mutate state, place blocks, summon entities, open GUIs, drive the player, hot-reload scripts, read their errors, and turn any of it into a repeatable assertion.
+description: Test Minecraft mods on a live game through the AutoJS MCP endpoint. Use it to evaluate JavaScript on the client or server side of a running Minecraft game (NeoForge, Forge or Fabric; KubeJS when it is installed, AutoJS's own Rhino kernel when it is not), inspect and mutate any state, place blocks, summon entities, drive GUIs, input and the player, hot-reload scripts, read their errors, and turn any of it into a repeatable assertion. No human interaction is needed — it reads any data and simulates any player action while the game keeps running in the background.
 ---
 
 # AutoJS
@@ -9,11 +9,20 @@ description: Test Minecraft mods on a running game through the AutoJS MCP endpoi
 
 用途是**测模组**，工作方式是**高频迭代**：写一小段脚本 → 跑 → 看返回值/日志 → 改 → 再跑。没有构建、没有重启、秒级往返，所以可以一条一条假设地试，而不是一次写一大段赌它对。这也是它区别于"写个调试命令 / 加临时日志 / 重启游戏"的地方：**试错成本低到可以随便试**。
 
+**能力边界先说清楚：几乎任何数据都读得到，几乎任何操作都能模拟，全程不需要人。** 你拿到的是游戏自己的脚本上下文，不是一个受限的调试接口：
+
+- **读**：任何对象、字段、NBT、注册表条目、屏幕与菜单结构（`AutoJS.ui()` 含 `menu.slots` 的槽位数与类型）、背包内容（`AutoJS.inventory()`，打开的容器用 Java 读 `player.containerMenu`）、实体、区块数据、游戏目录下的文件与日志。`eval_js` 返回的是真实 Java 对象，`Object.keys`/`JSON.stringify`/直接调方法都行；`AutoJS.*` 只是把这些查法包了一层。
+- **写与模拟**：放置/破坏方块、召唤/移动/击杀实体、开关界面、点按钮、敲键、移动鼠标、驱动玩家移动、改时间天气、执行命令、发包与收包——走的是游戏自己的输入与命令路径（客户端走真实的 `Input`/`MouseHandler`/`Screen` 路径，服务端走 `ServerPlayerGameMode` 与命令源），所以被测 mod 看到的就是"真玩家在做这件事"，而不是绕过它的旁路。
+- **不需要人工介入**：`AutoJS.background(true)` 把鼠标放出去但世界照常 tick，脚本可以一直跑；事件处理器能在运行中注册，"注入观察点 → 触发 → 读结果"不用改文件再重载；`reload_scripts` 让脚本文件改动即时生效；MCP 端点是本地 HTTP，调用方可以是任何自动化程序。**没有需要人去点、去看、去确认的步骤**——不要因为"这得有人操作一下"而停下。
+- **权限**：默认 `unrestricted=true`，KubeJS 的类过滤、事件注册守卫、路径限制全部拆掉，`Runtime`、`ProcessBuilder`、游戏目录外的任意路径都够得到（这也是端点只绑 loopback 的原因）。
+
+只有两类例外，别把"做不到"误判成这两类之外的东西：运行时**不能新建注册表条目**（物品/方块/流体在启动时冻结，测新内容要重启游戏）；个别 KubeJS 世代能力有差异（见第 2 节的「世代差异」一段）。除此之外，遇到"读不到/做不了"，先假设是脚本没写对。
+
 所以**不要被下面任何一层绑住**：
 
 - 内置 `AutoJS.*`（第 3 节）是**可选封装**——省掉坐标、注册表查找、掉落拾取之类的样板，不用它直接写 Java 也一样能碰到任何东西；
 - KubeJS 事件是**可选驱动方式**——需要"随时间观察/随事件触发"时用它最省事，需要一次性求值时完全不必（Rhino 模式下没有事件系统，退回自己轮询）；
-- 第 4 节的参考流程只是**常见环境的现成套路**，照抄可以，但不是必走路径。
+- 第 4 节的复杂案例只是**几个已验证的拼法**，照抄可以，但不是必走路径——真正的写法按你要测的东西来。
 
 反过来，三层都用上通常最省事：用 `eval_js` 跑一段 Java 拿到对象，用 KubeJS 事件观察后续，用 `AutoJS.*` 收拾样板活。
 
@@ -199,121 +208,131 @@ curl -s -X POST http://127.0.0.1:25585/mcp -H 'Content-Type: application/json' \
 | `read/write/append/exists/readJson/writeJson` | 相对路径按游戏目录解析，绝对路径可用 |
 | `stack(物品, 数量)` `log(...)` | 造物品堆 / 写 KubeJS 控制台 |
 
-## 4. 参考流程（常见环境的套路，不是必走路径）
+## 4. 复杂调试案例（`AutoJS.*` 不够用时）
 
-下面这些是测模组时反复会用到的拼法，**照抄可以，但别当成清单或必须走的流程**：它们只是把前面几节的东西拼起来的样子。真正要测什么、怎么切步骤，按你自己的模组来——很多时候一段十行的自制脚本比套用这里的模板更直接。除特别标注外都用 `side=server`。
+`AutoJS.*` 只覆盖"能放下、能打开、NBT 有东西"。真正的 bug 几乎都在封装够不到的地方：mod 自己的类、自己的数据、自己的 GUI 事件。下面每个案例都用 `Java.loadClass` 直接碰这些，**都已实测**（除注明外 `side=server`），把 `com.example` 换成你的 mod 即可。
 
-### T1 测一个方块（放下 → 看属性 → 破坏 → 看掉落）
-
-```js
-AutoJS.setBlock(0, 100, 0, "yourmod:your_block")       // 或 place() 模拟玩家右键摆放
-AutoJS.blockInfo(0, 100, 0)                            // 属性/硬度/发光/群系/方块实体
-AutoJS.mine(0, 100, 0)                                 // 走游戏破坏逻辑
-JSON.parse(AutoJS.collect(6))                           // 掉落物（注意 10 tick 拾取延迟）
-```
-
-要测掉落表就连续挖几个不同工具下的表现；要测"能否被工具破坏"就看 `mine` 的返回值和 `collect` 的结果。
-
-### T2 测方块实体 / 机器（放置 → 开界面 → 看 NBT）
+最短的循环，够用就别往下翻：
 
 ```js
-AutoJS.setBlock(0, 101, 0, "yourmod:your_machine")
-AutoJS.place(0, 101, 0, "up")                           // 右击它，等价玩家点开界面
-AutoJS.where()                                          // → "container open: <标题> (container menu: YourMenu)"
-AutoJS.ui()                                             // 含 menu.class / menu.slots / menu.mod
-AutoJS.nbt(AutoJS.blockEntity(0, 101, 0))               // 机器内部状态，SNBT
+AutoJS.setBlock(0,100,0,"yourmod:your_block"); AutoJS.blockInfo(0,100,0)
+AutoJS.place(0,100,0,"up"); AutoJS.nbt(AutoJS.blockEntity(0,100,0))
+AutoJS.mine(0,100,0); JSON.parse(AutoJS.collect(6))
 ```
 
-**缺口**：容器槽位的读写（往机器里塞料、读进度、取产物）还没做，现在只能看 NBT 和菜单结构。这是测机器类 mod 最该补的一块。
+### C1 读方块实体**实际类**的内部状态（不用反射、不猜 NBT）
 
-### T3 测一个物品（拿到 → 手持 → 使用 → 看效果）
+`AutoJS.blockEntity()` 给的是真实对象，成员按**运行时类**解析——mod 的方块实体自己的 getter 直接能调：
 
 ```js
-AutoJS.give("yourmod:your_item", 1)
-AutoJS.command("item replace entity @a hotbar.0 with yourmod:your_item")   // 精确放到手里的槽位
-JSON.parse(AutoJS.state()).held                         // 确认拿到
-AutoJS.use()                                            // 右键使用
-JSON.parse(AutoJS.state())                              // 看 effects / health / 变化
-AutoJS.nbt(AutoJS.held(AutoJS.player()))                // 物品 NBT/组件
+var be = AutoJS.blockEntity(0, 100, 0);
+be.getOpenNess(0.5)          // 实测：ChestBlockEntity 的方法，BlockEntity 上没有
+be.getProgress()             // 机器类同理；公开字段同样按运行时类解析，如 be.energyStored
 ```
 
-### T4 测一个实体
+比猜 NBT 结构可靠。只有它不公开时才退回 `AutoJS.nbt(be)`。
+
+### C2 手工构造一次"玩家右键"（指定手、面、命中点）
+
+`AutoJS.place()` 只按面中心点；mod 若看命中偏移、手、潜行，就得自己造 `BlockHitResult`：
 
 ```js
-var e = AutoJS.summon("yourmod:your_entity", 0, 100, 0)
-JSON.parse(AutoJS.view(360, 16, 5))                     // 结构化信息：health/hostile/targetingMe
-JSON.parse(AutoJS.state())                              // 它会不会打你、你掉不掉血
-AutoJS.attack(e)                                        // 攻击（受冷却限制，循环攻击要放 tick 里）
-AutoJS.command("damage @e[type=yourmod:your_entity,limit=1] 5")   // 也可以走命令
+var Vec3 = Java.loadClass("net.minecraft.world.phys.Vec3");
+var Hit  = Java.loadClass("net.minecraft.world.phys.BlockHitResult");
+var Dir  = Java.loadClass("net.minecraft.core.Direction");
+var Hand = Java.loadClass("net.minecraft.world.InteractionHand");
+
+var p   = AutoJS.player();                 // 需要在线玩家；纯服务端没人时它是 null
+var pos = AutoJS.pos(0, 101, 0);
+var hit = new Hit(Vec3.atCenterOf(pos).add(0, 0.5, 0), Dir.UP, pos, false);
+p.gameMode.useItemOn(p, p.level(), AutoJS.held(p), Hand.MAIN_HAND, hit).consumesAction()
 ```
 
-### T5 测客户端界面与渲染（`side=client`）
+参数顺序与 `PlayerOps` 里实际用的是同一套（`useItemOn(player, level, stack, hand, hit)`；`useItem` 少一个 `hit`）。
+
+### C3 手工造物品组件（1.21 的 DataComponents）
 
 ```js
-AutoJS.where()                                          // "at the main menu" / "in the player inventory" / 某个 mod 的界面
-AutoJS.ui()                                             // screen.class / title / containerScreen / mod
-Client.setScreen(null)                                  // 关掉界面；也可以 new 一个原版界面直接打开
-JSON.parse(AutoJS.snapshot()).client                    // fps / window / hostingWorld
+var DC   = Java.loadClass("net.minecraft.core.component.DataComponents");
+var Comp = Java.loadClass("net.minecraft.network.chat.Component");
+var Hand = Java.loadClass("net.minecraft.world.InteractionHand");
+
+var s = AutoJS.stack("minecraft:diamond_sword", 1);
+s.set(DC.CUSTOM_NAME, Comp.literal("Probe Blade"));
+s.getHoverName().getString()               // → "Probe Blade"（实测）
+AutoJS.player().setItemInHand(Hand.MAIN_HAND, s)
 ```
 
-`ui().screen.mod` 用类的 code source 与 `ModList` 比对得出"这个界面属于哪个 mod"，开发工作区里匹配不到时该字段省略。
+拿在手里之后，mod 的名称/tooltip/组件读取路径就都能测；`JSON.parse(AutoJS.state()).held` 也能确认。
 
-### T6 测事件与回调（注入 KubeJS 事件，别用 Java 循环）
+### C4 遍历注册表：这个 mod 到底注册了什么
 
 ```js
-var __seen = [];
-ServerEvents.tick(function (e) { if (__seen.length < 5) __seen.push(JSON.parse(AutoJS.state()).health); });
-EntityEvents.beforeHurt(function (e) { __seen.push("hurt " + e.entity); });
-AutoJS.command("damage @a 2")                           // 触发
-// 稍后： JSON.stringify(__seen)
+var Reg = Java.loadClass("net.minecraft.core.registries.BuiltInRegistries");
+var it  = Reg.BLOCK.keySet().iterator(); var out = [];
+while (it.hasNext()) {
+  var id = it.next();
+  if (String(id.getNamespace()) === "yourmod") out.push(String(id));
+}
+out.length + " :: " + out.slice(0, 5).join(", ")
 ```
 
-处理器没有注销接口：流程要自己用计数器停手，或者 `reload_scripts` 清光。
+实测在 1.21.1 上能枚举出 1060 个 `minecraft:` 方块。`ITEM`/`ENTITY_TYPE`/`BLOCK_ENTITY_TYPE`/`MOB_EFFECT` 同法；`Reg.X.getKey(obj)` 反向拿 id。比 `findItems("yourmod")` 全，而且拿到 id 就能顺着去 `Java.loadClass` 对应类。
 
-### T7 测网络包与数据同步
+### C5 用**真实输入路径**点界面（测 GUI 的必杀）
 
-用 KubeJS 的 `NetworkEvents.dataReceived(...)` 观察收包（客户端/服务端各自注册），配合 `AutoJS.player().connection.send(...)` 或你自己的通道发包。同理可测"服务端改了状态，客户端什么时候才看见"：
+别直接调按钮的 `onPress()`——那会绕过 `ScreenEvent`，很多 mod 的监听器根本看不到。走游戏的点击路径（`side=client`）：
 
 ```js
-// side=server：改时间
-AutoJS.setTime(18000)
-// side=client：立刻读
-Client.level.getDayTime()          // 可能还是旧值
-// 稍后再读一次 → 追上了（时间包按周期同步）
+var CH = Java.loadClass("net.neoforged.neoforge.client.ClientHooks");
+var s = Client.screen; var b = null;
+for (var i = 0; i < s.children().size(); i++) {
+  var c = s.children().get(i);
+  if (c.getMessage && String(c.getMessage().getString()).indexOf("Options") >= 0) b = c;
+}
+var x = b.getX() + b.getWidth() / 2.0, y = b.getY() + b.getHeight() / 2.0;
+CH.onScreenMouseClickedPre(s, x, y, 0);
+s.mouseClicked(x, y, 0);
+CH.onScreenMouseClickedPost(s, x, y, 0, false);
 ```
 
-### T8 测配方、标签、注册表
+实测：标题界面上这一下点开了 `Options...`（`mouseClicked` 返回 true，`AutoJS.ui().screen.class` 变成 `OptionsScreen`）。键盘/字符同理：`onScreenKeyPressedPre/Post` + `screen.keyPressed(...)`、`onScreenCharTypedPre/Post` + `screen.charTyped(...)`。
+
+### C6 复现"受伤/效果"时先看 KubeJS 藏了什么
 
 ```js
-AutoJS.craftable(10)                                    // 按真实配方算可行性，含消耗
-JSON.parse(AutoJS.tags(AutoJS.item("yourmod:your_item")))
-AutoJS.findItems("yourmod", 20)                         // 这个 mod 加了哪些物品
-AutoJS.findBlocks("ore", 50, 20)                        // 世界里已加载区域内的矿石
+var MEI = Java.loadClass("net.minecraft.world.effect.MobEffectInstance");
+var ME  = Java.loadClass("net.minecraft.world.effect.MobEffects");
+var z = AutoJS.summon("minecraft:zombie", 3, 80, 3);
+z.addEffect(new MEI(ME.MOVEMENT_SPEED, 200, 2));   // ✅ 实测可用
+typeof z.hurt                                       // → "undefined"：KubeJS 2101 把它藏了，不是实体坏了
+AutoJS.attack(z)                                    // 伤害走真实攻击/冷却路径
+AutoJS.command("damage @e[type=minecraft:zombie,limit=1] 5")   // 或命令
 ```
 
-### T9 把检查写成可复跑的断言
+### 把检查写成可复跑的断言
 
-测模组最省事的形态：一段脚本跑完返回 pass/fail，改完代码 `reload_scripts` 再跑一次。
+一段脚本返回 pass/fail，改完代码 `reload_scripts` 再跑：
 
 ```js
 var checks = [];
 checks.push(["物品存在", !!AutoJS.item("yourmod:your_item")]);
 checks.push(["方块能放下", AutoJS.setBlock(0, 100, 0, "yourmod:your_block")]);
 checks.push(["方块有方块实体", !!AutoJS.blockEntity(0, 100, 0)]);
-checks.push(["标签齐全", AutoJS.tags(AutoJS.item("yourmod:your_item")).length > 0]);
+checks.push(["组件可读", AutoJS.stack("yourmod:your_item", 1).getHoverName().getString().length > 0]);
 JSON.stringify(checks.map(function (c) { return (c[1] ? "PASS " : "FAIL ") + c[0]; }))
 ```
 
-这种脚本可以直接写成 `kubejs/server_scripts/yourmod_test.js`，用 `reload_scripts` + `kubejs_log` 看结果。
+写成 `kubejs/server_scripts/yourmod_test.js`，用 `reload_scripts` + `kubejs_log` 看结果。
 
-### T10 排查报错
+### 排查报错
 
 ```
 reload_scripts side=server     → 重跑脚本
 kubejs_log     side=server     → 报错带 文件名#行号；栈帧已折叠成首帧+计数
 ```
 
-`kubejs_log` 只读 KubeJS 的日志文件（重载时被清空，所以重载后立刻读到的就是这次加载报了什么）。更早的历史或游戏日志直接读文件：`AutoJS.read("logs/kubejs/server.log")`、`AutoJS.read("logs/latest.log")`。
+`kubejs_log` 读的是该 side 的 KubeJS 控制台文件（重载会清空，所以重载后读到的就是这次加载报了什么）。更早的历史或游戏日志直接读文件：`AutoJS.read("logs/kubejs/server.log")`、`AutoJS.read("logs/latest.log")`（老一代 KubeJS 是 `.txt`）。
 
 ## 5. 心智模型（踩过的坑）
 
