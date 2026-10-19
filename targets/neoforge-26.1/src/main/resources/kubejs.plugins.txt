@@ -4,4 +4,4 @@
 #   <fqcn> [client|<modid> ...]
 #   client  -> only loaded when the game runs as a client
 #   <modid> -> only loaded when that mod is present
-cc.sighs.autojs.neoforge.AutoJSKubeJSPlugin
+com.sighs.autojs.neoforge.AutoJSKubeJSPlugin

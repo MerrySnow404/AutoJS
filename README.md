@@ -6,7 +6,7 @@
 | --- | --- |
 | 模组名 | AutoJS |
 | mod id | `autojs` |
-| 包名 / Gradle group | `cc.sighs.autojs` |
+| 包名 / Gradle group | `com.sighs.autojs` |
 | 作者 | MerrySnow |
 | 协议 | GPL-3.0-or-later |
 | 当前 target | 六个（见下表） |
@@ -46,7 +46,7 @@
 .\gradlew.bat -p common build
 ```
 
-经源码确证在某个 target 上存在版本差异的 common 文件，在该 target 的 `prepareCommonSources` 中 `exclude` 对应路径，并由该 target 提供自己的实现。`targets/neoforge-1.21.1` 的 exclude 块就是这条规则的登记表：引擎轴的每一条对应 `cc/sighs/autojs/neoforge/` 下一个由该 target 自己实现的文件，加载器轴同理。KubeJS 与 Rhino 都属“世代断裂”的 API（KubeJS 2101 才有 `KubeJSContextFactory` 与插件接口，Rhino 2101 才有 `ContextFactory`），所以引擎实现不能留在 `common` 让别的版本照编。
+经源码确证在某个 target 上存在版本差异的 common 文件，在该 target 的 `prepareCommonSources` 中 `exclude` 对应路径，并由该 target 提供自己的实现。`targets/neoforge-1.21.1` 的 exclude 块就是这条规则的登记表：引擎轴的每一条对应 `com/sighs/autojs/neoforge/` 下一个由该 target 自己实现的文件，加载器轴同理。KubeJS 与 Rhino 都属“世代断裂”的 API（KubeJS 2101 才有 `KubeJSContextFactory` 与插件接口，Rhino 2101 才有 `ContextFactory`），所以引擎实现不能留在 `common` 让别的版本照编。
 
 ## MCP 端点
 
@@ -76,7 +76,7 @@ AutoJS 自带 Rhino 脚本内核（对 `dev.latvian.mods:rhino` 是硬依赖）�
 | `reload_scripts` | KubeJS 的 reload 路径（客户端还会重收 tooltip 缓存） | 重建该 side 的 Rhino 作用域 |
 | 沙箱 | 由 `unrestricted` 决定是否拆 | 天生没有沙箱：裸 Rhino context 不过滤任何类 |
 
-Rhino 模式只是"能跑脚本"，不是 KubeJS 的等价替代：事件系统与预注册绑定层刻意没有复刻。两种模式在代码上是同一个接缝的两个实现：`common/src/main/java/cc/sighs/autojs/engine/ScriptEngine.java` 定义引擎该做什么（能不能求值、沙箱开没开、怎么求值、怎么重载），`targets/neoforge-1.21.1/src/main/java/cc/sighs/autojs/neoforge/kubejs/KubeJSEngine.java` 与 `.../rhino/RhinoEngine.java` 是它的两个实现；`AutoJSBackends` 是按 `ModList` 选实现的门面，且不 import 任何 KubeJS 类型（所以没装 KubeJS 时 mod 构造期不会 `NoClassDefFoundError`）。
+Rhino 模式只是"能跑脚本"，不是 KubeJS 的等价替代：事件系统与预注册绑定层刻意没有复刻。两种模式在代码上是同一个接缝的两个实现：`common/src/main/java/com/sighs/autojs/engine/ScriptEngine.java` 定义引擎该做什么（能不能求值、沙箱开没开、怎么求值、怎么重载），`targets/neoforge-1.21.1/src/main/java/com/sighs/autojs/neoforge/kubejs/KubeJSEngine.java` 与 `.../rhino/RhinoEngine.java` 是它的两个实现；`AutoJSBackends` 是按 `ModList` 选实现的门面，且不 import 任何 KubeJS 类型（所以没装 KubeJS 时 mod 构造期不会 `NoClassDefFoundError`）。
 
 一个例外要说明：启动脚本（`startup_scripts`）没有自己的 side，`AutoJS.side()` 一律报 `server`（KubeJS 模式下以前报 `startup`）；日志出口仍然是 KubeJS 的 startup 控制台，不受影响。
 
@@ -119,7 +119,7 @@ Rhino 模式只是"能跑脚本"，不是 KubeJS 的等价替代：事件系统�
 
 ## AutoJS 全局
 
-同一套能力也以 `AutoJS` 全局绑定注入每个脚本上下文（KubeJS 的，或 Rhino 模式下的那一个），`startup_scripts` / `server_scripts` / `client_scripts` 里都能直接用，和 `eval_js` 是同一个对象（代码在 `common/src/main/java/cc/sighs/autojs/neoforge/script/AutoJSTools.java`）。Rhino 模式下 `startup_scripts` 不存在，`AutoJS` 挂在 `eval_js` 的作用域上：
+同一套能力也以 `AutoJS` 全局绑定注入每个脚本上下文（KubeJS 的，或 Rhino 模式下的那一个），`startup_scripts` / `server_scripts` / `client_scripts` 里都能直接用，和 `eval_js` 是同一个对象（代码在 `common/src/main/java/com/sighs/autojs/neoforge/script/AutoJSTools.java`）。Rhino 模式下 `startup_scripts` 不存在，`AutoJS` 挂在 `eval_js` 的作用域上：
 
 ```js
 AutoJS.where()       // 人话回答现在在哪："at the main menu" / "playing in minecraft:overworld at 2,89,-6, no screen open" / "at a crafting table"

@@ -8,8 +8,8 @@
   "license": "${mod_license}",
   "environment": "*",
   "entrypoints": {
-    "main": ["cc.sighs.autojs.neoforge.AutoJSFabric"],
-    "client": ["cc.sighs.autojs.neoforge.AutoJSFabricClient"]
+    "main": ["com.sighs.autojs.neoforge.AutoJSFabric"],
+    "client": ["com.sighs.autojs.neoforge.AutoJSFabricClient"]
   },
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",

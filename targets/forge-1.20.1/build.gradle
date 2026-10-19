@@ -47,51 +47,51 @@ tasks.register('prepareCommonSources', Sync) {
         // implementation. Everything not listed here stays shared with every
         // other target.
         //
-        // The paths below are common's own package (cc.sighs.autojs.neoforge),
+        // The paths below are common's own package (com.sighs.autojs.neoforge),
         // because that is where the shared copy lives; this target's
-        // replacements live under cc.sighs.autojs.forge and are listed one by one
+        // replacements live under com.sighs.autojs.forge and are listed one by one
         // in the report. Every excluded path is a file whose whole reason to
         // exist is a KubeJS generation (2101 in common), a Rhino generation
         // (2101 in common) or a loader API, so none of them can compile here.
         //
         // Script-engine axis.
-        exclude 'cc/sighs/autojs/neoforge/AbstractKubeJSSideBackend.java'
-        exclude 'cc/sighs/autojs/neoforge/KubeJSConsole.java'
-        exclude 'cc/sighs/autojs/neoforge/KubeJSEvaluator.java'
-        exclude 'cc/sighs/autojs/neoforge/KubeJSScriptManagers.java'
-        exclude 'cc/sighs/autojs/neoforge/KubeJSSideBackend.java'
-        exclude 'cc/sighs/autojs/neoforge/AutoJSKubeJSPlugin.java'
-        exclude 'cc/sighs/autojs/neoforge/AutoJSUnrestricted.java'
-        exclude 'cc/sighs/autojs/neoforge/backend/RhinoSideBackend.java'
-        exclude 'cc/sighs/autojs/neoforge/client/ClientEvalBackend.java'
-        exclude 'cc/sighs/autojs/neoforge/eval/ScriptValue.java'
-        exclude 'cc/sighs/autojs/neoforge/kubejs/KubeJSIntegration.java'
-        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoEngine.java'
-        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoBindings.java'
-        exclude 'cc/sighs/autojs/neoforge/rhino/RhinoRuntime.java'
-        exclude 'cc/sighs/autojs/neoforge/server/ServerEvalBackend.java'
-        exclude 'cc/sighs/autojs/neoforge/tools/KubeJSLogTool.java'
-        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedAccess.java'
-        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedContextFactory.java'
-        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSContext.java'
-        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSServerContext.java'
-        exclude 'cc/sighs/autojs/neoforge/unrestricted/UnrestrictedPathWrappers.java'
+        exclude 'com/sighs/autojs/neoforge/AbstractKubeJSSideBackend.java'
+        exclude 'com/sighs/autojs/neoforge/KubeJSConsole.java'
+        exclude 'com/sighs/autojs/neoforge/KubeJSEvaluator.java'
+        exclude 'com/sighs/autojs/neoforge/KubeJSScriptManagers.java'
+        exclude 'com/sighs/autojs/neoforge/KubeJSSideBackend.java'
+        exclude 'com/sighs/autojs/neoforge/AutoJSKubeJSPlugin.java'
+        exclude 'com/sighs/autojs/neoforge/AutoJSUnrestricted.java'
+        exclude 'com/sighs/autojs/neoforge/backend/RhinoSideBackend.java'
+        exclude 'com/sighs/autojs/neoforge/client/ClientEvalBackend.java'
+        exclude 'com/sighs/autojs/neoforge/eval/ScriptValue.java'
+        exclude 'com/sighs/autojs/neoforge/kubejs/KubeJSIntegration.java'
+        exclude 'com/sighs/autojs/neoforge/rhino/RhinoEngine.java'
+        exclude 'com/sighs/autojs/neoforge/rhino/RhinoBindings.java'
+        exclude 'com/sighs/autojs/neoforge/rhino/RhinoRuntime.java'
+        exclude 'com/sighs/autojs/neoforge/server/ServerEvalBackend.java'
+        exclude 'com/sighs/autojs/neoforge/tools/KubeJSLogTool.java'
+        exclude 'com/sighs/autojs/neoforge/unrestricted/UnrestrictedAccess.java'
+        exclude 'com/sighs/autojs/neoforge/unrestricted/UnrestrictedContextFactory.java'
+        exclude 'com/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSContext.java'
+        exclude 'com/sighs/autojs/neoforge/unrestricted/UnrestrictedKubeJSServerContext.java'
+        exclude 'com/sighs/autojs/neoforge/unrestricted/UnrestrictedPathWrappers.java'
 
         // Loader axis: the mod constructor, its client half and the engine
         // selection facade are the only files whose FML usage is their whole
         // reason to exist.
-        exclude 'cc/sighs/autojs/neoforge/AutoJSBackends.java'
-        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForge121.java'
-        exclude 'cc/sighs/autojs/neoforge/AutoJSNeoForgeClient.java'
+        exclude 'com/sighs/autojs/neoforge/AutoJSBackends.java'
+        exclude 'com/sighs/autojs/neoforge/AutoJSNeoForge121.java'
+        exclude 'com/sighs/autojs/neoforge/AutoJSNeoForgeClient.java'
 
         // Minecraft API axis: the three implementations of the interfaces
-        // cc.sighs.autojs.mc hands out, plus the Input subclass the client
+        // com.sighs.autojs.mc hands out, plus the Input subclass the client
         // bridge drives (net.minecraft.client.player.Input itself is what
         // changed, so only this target has this Input).
-        exclude 'cc/sighs/autojs/neoforge/client/AutoJSInput.java'
-        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSClient.java'
-        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSLoader.java'
-        exclude 'cc/sighs/autojs/neoforge/mc/AutoJSVanilla.java'
+        exclude 'com/sighs/autojs/neoforge/client/AutoJSInput.java'
+        exclude 'com/sighs/autojs/neoforge/mc/AutoJSClient.java'
+        exclude 'com/sighs/autojs/neoforge/mc/AutoJSLoader.java'
+        exclude 'com/sighs/autojs/neoforge/mc/AutoJSVanilla.java'
     }
     into "$buildDir/generated/common-main"
 }

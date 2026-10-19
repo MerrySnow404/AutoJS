@@ -25,7 +25,7 @@
 
 ### common
 
-`common` 包含所有没有确证版本差异的代码，可以引用 Minecraft 类型，也可以引用 loader、Mixin、渲染与网络 API；依赖平台类型不是拆分理由，Java 版本也不是。当前 `common` 仍引用 Minecraft 类型，但只在 `mc/` 那层接缝之后（Minecraft API 轴已拆：共享代码经 `cc.sighs.autojs.mc.McApi` 取 `LoaderApi`/`VanillaApi`/`ClientApi`，接口里不出现任何只在某个版本存在的类型，实现全在 target），且已不引用任何 KubeJS/Rhino 类型：脚本引擎实现绑死在具体世代上，全部在 target。
+`common` 包含所有没有确证版本差异的代码，可以引用 Minecraft 类型，也可以引用 loader、Mixin、渲染与网络 API；依赖平台类型不是拆分理由，Java 版本也不是。当前 `common` 仍引用 Minecraft 类型，但只在 `mc/` 那层接缝之后（Minecraft API 轴已拆：共享代码经 `com.sighs.autojs.mc.McApi` 取 `LoaderApi`/`VanillaApi`/`ClientApi`，接口里不出现任何只在某个版本存在的类型，实现全在 target），且已不引用任何 KubeJS/Rhino 类型：脚本引擎实现绑死在具体世代上，全部在 target。
 
 从 `common` 拆到 `targets/<loader>-<mc-version>/` 的唯一理由是：经阅读实际源码/API 确证该内容在不同 loader、不同 Minecraft 版本或不同脚本引擎世代之间存在差异。不能凭猜测拆，也不能为了“代码好看”拆。
 
@@ -42,7 +42,7 @@
 每个 target 是独立 Gradle 根工程，拥有自己的：
 
 - 入口、注册、事件、网络和生命周期代码。
-- `cc.sighs.autojs.mc` 三个接缝接口的实现（`LoaderApi`、`VanillaApi`、`ClientApi`），以及因自身类型随版本改变而归 target 的类（例如 `net.minecraft.client.player.Input` 的子类）、Mixin、accessor、渲染后端和 client-only 代码。
+- `com.sighs.autojs.mc` 三个接缝接口的实现（`LoaderApi`、`VanillaApi`、`ClientApi`），以及因自身类型随版本改变而归 target 的类（例如 `net.minecraft.client.player.Input` 的子类）、Mixin、accessor、渲染后端和 client-only 代码。
 - 脚本引擎实现（`ScriptEngine` 的各世代实现：KubeJS 引擎、拆沙箱与 Rhino 内核）。
 - metadata、资源、数据生成和版本范围。
 - JDK、Gradle wrapper、加载器和 mappings 配置。
